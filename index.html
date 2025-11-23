@@ -1,66 +1,1734 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CYBER RUNNER 2077</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
+  <title>🌆 サイバーパンク・ネオシティ・アクション</title>
+  <style>
+    /* サイバーパンク基本スタイル */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --neon-cyan: #00ffff;
+      --neon-pink: #ff00ff;
+      --neon-yellow: #ffff00;
+      --neon-orange: #ff4400;
+      --dark-bg: #0a0a0f;
+      --cyber-dark: #1a1a2e;
+      --cyber-blue: #0f3460;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #0d0d1a;
+      overflow: hidden;
+      font-family: 'Press Start 2P', cursive;
+      color: #eee;
+      position: relative;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* サイバー背景エフェクト */
+    .cyber-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .cyber-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        linear-gradient(to right, rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.2;
+      animation: gridFlow 60s linear infinite;
+    }
+
+    @keyframes gridFlow {
+      from { background-position: 0 0; }
+      to { background-position: 800px 600px; }
+    }
+
+    .neon-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .neon-line {
+      position: absolute;
+      background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+      height: 2px;
+      animation: neonLineFlow 8s linear infinite;
+      opacity: 0.6;
+    }
+
+    .neon-line:nth-child(1) { top: 10%; width: 150%; left: -50%; animation-delay: 0s; transform: rotate(5deg); }
+    .neon-line:nth-child(2) { top: 30%; width: 120%; left: -20%; animation-delay: 2s; transform: rotate(-3deg); }
+    .neon-line:nth-child(3) { top: 60%; width: 130%; left: -30%; animation-delay: 4s; transform: rotate(2deg); }
+    .neon-line:nth-child(4) { top: 85%; width: 110%; left: -10%; animation-delay: 6s; transform: rotate(-7deg); }
+
+    @keyframes neonLineFlow {
+      0% { transform: translateX(-100%); opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    .hologram-particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('data:image/svg+xml;utf8,<svg width="4" height="4" viewBox="0 0 4 4" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="0.5" fill="rgba(0,255,255,0.7)"/></svg>');
+      background-repeat: repeat;
+      background-size: 20px 20px;
+      opacity: 0.3;
+      animation: hologramNoise 0.5s steps(1) infinite, particleFlow 30s linear infinite;
+    }
+
+    @keyframes hologramNoise {
+      0% { opacity: 0.3; }
+      50% { opacity: 0.4; }
+      100% { opacity: 0.3; }
+    }
+
+    @keyframes particleFlow {
+      from { background-position: 0 0; }
+      to { background-position: 400px 300px; }
+    }
+
+    /* ゲームコンテナ */
+    #gameContainer {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      overflow: hidden;
+      border: 5px solid var(--neon-cyan);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+      background-color: var(--cyber-dark);
+    }
+
+    /* iOSの安全エリア対応 */
+    @supports (padding: max(0px)) {
+      #gameContainer {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+        padding-bottom: max(10px, env(safe-area-inset-bottom));
+      }
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background-color: #000;
+    }
+
+    /* HUD (Head-Up Display) */
+    #gameInfo {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom: 2px solid var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      z-index: 5;
+      font-size: 1.2em;
+      color: var(--neon-cyan);
+    }
+
+    #stageInfo, #lifeInfo {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background-color: rgba(0, 255, 255, 0.1);
+      padding: 8px 20px;
+      border-radius: 5px;
+      border: 1px solid var(--neon-cyan);
+    }
+
+    .neon-text {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .stage-number, .life-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 8px var(--neon-yellow);
+    }
+
+    .life-bar {
+      width: 100px;
+      height: 15px;
+      background-color: rgba(255, 0, 0, 0.3);
+      border: 1px solid #ff0000;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-left: 10px;
+    }
+
+    .life-fill {
+      height: 100%;
+      width: 100%;
+      background-color: #ff0000;
+      transition: width 0.3s ease-in-out;
+      border-radius: 5px;
+    }
+
+    #soundControls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .cyber-btn {
+      background-color: rgba(0, 0, 0, 0.5);
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 5px;
+      padding: 8px 12px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+    }
+
+    .cyber-btn:hover {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-color: #fff;
+    }
+
+    /* モバイルコントロール */
+    #mobileControls {
+      display: none;
+    }
+
+    .control-btn {
+      background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-dark));
+      border: 3px solid var(--neon-cyan);
+      border-radius: 15px;
+      color: var(--neon-cyan);
+      font-size: 2em;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: all 0.1s ease-in-out;
+      box-shadow: 
+        0 0 15px rgba(0, 255, 255, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1);
+      text-shadow: 0 0 10px var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .control-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .control-btn.active {
+      transform: scale(0.95);
+      box-shadow: 
+        0 0 25px rgba(0, 255, 255, 0.8),
+        inset 0 2px 10px rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, var(--neon-cyan), var(--cyber-blue));
+      color: var(--cyber-dark);
+    }
+
+    .control-btn.active::before {
+      transform: translateX(100%);
+    }
+
+    /* ジャンプボタン専用スタイル */
+    .jump-btn {
+      background: linear-gradient(135deg, var(--neon-pink), var(--cyber-dark));
+      border-color: var(--neon-pink);
+      color: var(--neon-pink);
+      text-shadow: 0 0 10px var(--neon-pink);
+      box-shadow: 
+        0 0 15px rgba(255, 0, 255, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .jump-btn.active {
+      background: linear-gradient(135deg, var(--neon-yellow), var(--neon-pink));
+      box-shadow: 
+        0 0 25px rgba(255, 0, 255, 0.8),
+        inset 0 2px 10px rgba(255, 255, 255, 0.2);
+      color: var(--cyber-dark);
+    }
+
+    /* メッセージスクリーン */
+    #messageScreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: var(--neon-cyan);
+      font-size: 1.5em;
+      text-align: center;
+      z-index: 20;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .message-content {
+      background-color: var(--cyber-dark);
+      border: 3px solid var(--neon-pink);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .message-header {
+      margin-bottom: 20px;
+      position: relative;
+      width: 100%;
+    }
+
+    #messageIcon {
+      font-size: 3em;
+      margin-bottom: 10px;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 15px var(--neon-yellow);
+    }
+
+    #messageTitle {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+
+    .scan-line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, transparent, rgba(0, 255, 255, 0.8), transparent);
+      animation: scanLine 2s linear infinite;
+    }
+
+    @keyframes scanLine {
+      0% { transform: translateY(0); opacity: 0; }
+      50% { transform: translateY(-5px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+
+    .message-body {
+      margin-bottom: 30px;
+      width: 100%;
+    }
+
+    #messageText {
+      margin-bottom: 20px;
+      color: #eee;
+      line-height: 1.5;
+      font-size: 0.9em;
+    }
+
+    .loading-bar {
+      width: 100%;
+      height: 10px;
+      background-color: rgba(0, 255, 255, 0.2);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .loading-progress {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(to right, var(--neon-cyan), var(--neon-pink));
+      animation: loadingAnimation 3s ease-out forwards;
+    }
+
+    @keyframes loadingAnimation {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+
+    .message-footer {
+      width: 100%;
+      text-align: center;
+    }
+
+    .cyber-start-btn {
+      background-color: var(--cyber-blue);
+      color: #fff;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 8px;
+      padding: 12px 25px;
+      font-size: 1.1em;
+      font-family: 'Press Start 2P', cursive;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cyber-start-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .cyber-start-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
+    }
+
+    .cyber-start-btn:hover::before {
+      left: 100%;
+    }
+
+    .cyber-start-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-text {
+      margin-right: 10px;
+    }
+
+    .btn-arrow {
+      font-size: 20px;
+      animation: arrowPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(5px); }
+    }
+
+    /* レスポンシブ対応 */
+    @media (max-width: 768px) {
+      #gameContainer {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+      }
+
+      #gameInfo {
+        font-size: 0.8em;
+        padding: 5px 10px;
+        height: 50px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 15;
+      }
+
+      #stageInfo, #lifeInfo {
+        font-size: 0.7em;
+        padding: 3px 8px;
+      }
+
+      .stage-number, .life-number {
+        font-size: 1em;
+      }
+
+      #soundControls {
+        gap: 5px;
+      }
+
+      .cyber-btn {
+        padding: 5px 8px;
+        font-size: 0.9em;
+      }
+
+      /* モバイルコントロールを表示 */
+      #mobileControls {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      /* 左側の移動ボタン */
+      #leftBtn, #rightBtn {
+        position: absolute;
+        bottom: 20px;
+        width: 80px;
+        height: 80px;
+        pointer-events: auto;
+      }
+
+      #leftBtn {
+        left: 20px;
+      }
+
+      #rightBtn {
+        left: 120px;
+      }
+
+      /* 右側のジャンプボタン */
+      #jumpBtn {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 100px;
+        height: 100px;
+        pointer-events: auto;
+        font-size: 2.5em;
+      }
+
+      #messageScreen {
+        font-size: 1.2em;
+        padding: 10px;
+      }
+
+      .message-content {
+        width: 95%;
+        padding: 20px;
+      }
+
+      #messageTitle {
+        font-size: 1.8em;
+      }
+
+      #messageText {
+        font-size: 0.8em;
+      }
+
+      .cyber-start-btn {
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+    }
+
+    /* 横画面専用の追加調整 */
+    @media (max-width: 768px) and (orientation: landscape) {
+      #gameInfo {
+        height: 40px;
+        font-size: 0.7em;
+        padding: 3px 8px;
+      }
+
+      #stageInfo, #lifeInfo {
+        font-size: 0.6em;
+        padding: 2px 6px;
+      }
+
+      .stage-number, .life-number {
+        font-size: 0.9em;
+      }
+
+      #leftBtn, #rightBtn {
+        bottom: 15px;
+        width: 70px;
+        height: 70px;
+      }
+
+      #leftBtn {
+        left: 15px;
+      }
+
+      #rightBtn {
+        left: 100px;
+      }
+
+      #jumpBtn {
+        bottom: 15px;
+        right: 15px;
+        width: 90px;
+        height: 90px;
+        font-size: 2.2em;
+      }
+
+      .control-btn {
+        font-size: 1.8em;
+      }
+    }
+
+    /* iPhone SE等の小さい画面用 */
+    @media (max-width: 414px) {
+      #leftBtn, #rightBtn {
+        width: 65px;
+        height: 65px;
+        bottom: 10px;
+      }
+
+      #leftBtn {
+        left: 10px;
+      }
+
+      #rightBtn {
+        left: 85px;
+      }
+
+      #jumpBtn {
+        width: 80px;
+        height: 80px;
+        bottom: 10px;
+        right: 10px;
+        font-size: 2em;
+      }
+
+      .control-btn {
+        font-size: 1.6em;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="game-container">
-        <div class="game-header">
-            <h1>CYBER RUNNER</h1>
-            <div class="score">
-                STAGE: <span id="currentStageDisplay">1</span> / 5<br>
-                SCORE: <span id="score">0</span> / <span id="targetScoreDisplay">200</span>
-            </div>
-        </div>
-        
-        <div id="canvas-wrapper">
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
-        </div>
-        
-        <div class="game-controls">
-            <div class="move-controls">
-                <button id="leftBtn" class="control-btn move-btn">←</button>
-                <button id="rightBtn" class="control-btn move-btn">→</button>
-            </div>
-            <div class="action-controls">
-                <button id="jumpBtn" class="control-btn">JUMP</button>
-                <button id="slideBtn" class="control-btn">SLIDE</button>
-            </div>
-        </div>
-        
-        <div class="game-info">
-            <p>🤖 2段ジャンプが可能になりました！</p>
-            <p>💻 矢印キー:移動 | SPACE:ジャンプ | ↓:スライド</p>
-        </div>
-        
-        <div id="startScreen" class="game-overlay">
-            <h1 class="title-glitch" data-text="CYBER RUNNER">CYBER RUNNER</h1>
-            <p>ROBOT RUNNER: VER 2.0</p>
-            <button id="startBtn" class="restart-btn">MISSION START</button>
-        </div>
-
-        <div id="gameOver" class="game-overlay hidden">
-            <h2 class="danger-text">SYSTEM FAILURE</h2>
-            <p>FINAL SCORE: <span id="finalScore">0</span></p>
-            <button id="restartBtn" class="restart-btn">REBOOT SYSTEM</button>
-        </div>
-
-        <div id="stageClear" class="game-overlay hidden">
-            <h2 class="success-text">STAGE CLEARED</h2>
-            <p>SCORE: <span id="stageClearScore">0</span></p>
-            <button id="nextStageBtn" class="restart-btn">NEXT LEVEL</button>
-        </div>
+  <div class="cyber-bg">
+    <div class="cyber-grid"></div>
+    <div class="neon-lines">
+      <div class="neon-line"></div>
+      <div class="neon-line"></div>
+      <div class="neon-line"></div>
+      <div class="neon-line"></div>
     </div>
-    
-    <div id="rotateDeviceMessage" class="rotate-message hidden">
-        <p>WARNING</p>
-        <p>LANDSCAPE MODE REQUIRED ↩️</p>
+    <div class="hologram-particles"></div>
+  </div>
+
+  <div id="gameContainer">
+    <div id="gameInfo">
+      <div id="stageInfo">
+        <span class="neon-text">SECTOR</span> 
+        <span id="currentStage" class="stage-number">1</span> 
+        <span class="neon-text">/ 10</span>
+      </div>
+      <div id="lifeInfo">
+        <span class="neon-text">LIFE</span> 
+        <span id="currentLife" class="life-number">3</span>
+        <div class="life-bar">
+          <div class="life-fill"></div>
+        </div>
+      </div>
+      <div id="soundControls">
+        <button id="soundToggle" class="cyber-btn">🎵</button>
+        <button id="volumeUp" class="cyber-btn">⬆</button>
+        <button id="volumeDown" class="cyber-btn">⬇</button>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="mobileControls">
+      <button id="leftBtn" class="control-btn" type="button">◀</button>
+      <button id="rightBtn" class="control-btn" type="button">▶</button>
+      <button id="jumpBtn" class="control-btn jump-btn" type="button">⬆</button>
+    </div>
+  </div>
+
+  <div id="messageScreen" class="game-message">
+    <div class="message-content">
+      <div class="message-header">
+        <div id="messageIcon" class="cyber-icon">🤖</div>
+        <h2 id="messageTitle" class="cyber-title">SYSTEM BOOT</h2>
+        <div class="scan-line"></div>
+      </div>
+      <div class="message-body">
+        <p id="messageText" class="cyber-text">Neural interface activated. Ready for data extraction.</p>
+        <div class="loading-bar">
+          <div class="loading-progress"></div>
+        </div>
+      </div>
+      <div class="message-footer">
+        <button id="messageButton" class="cyber-start-btn">
+          <span class="btn-text">EXECUTE</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <img id="playerImage" src="hero.png" style="display: none;" alt="Player" />
+  <img id="enemy1" src="enemy7.png" style="display: none;" alt="Enemy 1" />
+  <img id="enemy2" src="enemy8.png" style="display: none;" alt="Enemy 2" />
+  <img id="enemy3" src="enemy9.png" style="display: none;" alt="Enemy 3" />
+  <img id="enemy4" src="enemy10.png" style="display: none;" alt="Enemy 4" />
+  <img id="enemy5" src="maou.png" style="display: none;" alt="Boss" />
+  <img id="goburin" src="goburin.png" style="display: none;" alt="Goburin" />
+  <img id="naito" src="naito.png" style="display: none;" alt="Knight" />
+  <img id="summon2" src="summon_2.png" style="display: none;" alt="Summoner 2" />
+  <img id="summon3" src="summon_3.jpg" style="display: none;" alt="Summoner 3" />
+  <img id="summon5" src="summon_5.jpg" style="display: none;" alt="Summoner 5" />
+
+  <audio id="bgm" loop src="audio/run.mp3" preload="auto"></audio>
+  <audio id="seJump" src="audio/tobu.mp3" preload="auto"></audio>
+  <audio id="seCollect" src="audio/effect.wav" preload="auto"></audio>
+  <audio id="seHit" src="audio/effect.wav" preload="auto"></audio>
+  <audio id="seStageClear" src="audio/effect.wav" preload="auto"></audio>
+  <audio id="seGameOver" src="audio/effect.wav" preload="auto"></audio>
+
+  <script>
+    // DOM要素の取得
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const playerImage = document.getElementById('playerImage');
+    const messageScreen = document.getElementById('messageScreen');
+    const messageTitle = document.getElementById('messageTitle');
+    const messageText = document.getElementById('messageText');
+    const messageButton = document.getElementById('messageButton');
+    const currentStageSpan = document.getElementById('currentStage');
+    const currentLifeSpan = document.getElementById('currentLife');
+    const soundToggle = document.getElementById('soundToggle');
+    const volumeDown = document.getElementById('volumeDown');
+    const volumeUp = document.getElementById('volumeUp');
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
+    const jumpBtn = document.getElementById('jumpBtn');
+
+    // オーディオ要素の取得
+    const bgm = document.getElementById('bgm');
+    const seJump = document.getElementById('seJump');
+    const seCollect = document.getElementById('seCollect');
+    const seHit = document.getElementById('seHit');
+    const seStageClear = document.getElementById('seStageClear');
+    const seGameOver = document.getElementById('seGameOver');
+
+    // ゲーム状態と設定
+    let gameState = 'menu';
+    let currentStage = 1;
+    let playerLife = 3;
+    let soundEnabled = true;
+    let volume = 0.5;
+    let score = 0;
+    let stageStartTime = 0;
+    const keys = { left: false, right: false, space: false };
+
+    // 敵画像をステージごとに切り替え
+    let stageEnemyImage = null;
+
+    // 全ての画像要素を非表示にする関数
+    function hideAllImages() {
+      const images = document.querySelectorAll('img[id$="Image"], img[id^="enemy"], img[id="goburin"], img[id="naito"], img[id^="summon"]');
+      images.forEach(img => {
+        img.style.display = 'none';
+      });
+    }
+
+    hideAllImages();
+
+    const maxStages = 10;
+
+    // プレイヤー設定
+    const player = {
+      x: 50, y: 200,
+      width: 40, height: 40,
+      velocityX: 0, velocityY: 0,
+      speed: 5, jumpPower: 12,
+      onGround: false,
+      invulnerable: false,
+      invulnerableTime: 0,
+      speedBoostActive: false,
+      speedBoostTimer: 0,
+      highJumpActive: false,
+      highJumpTimer: 0,
+      shieldActive: false,
+      shieldTimer: 0
+    };
+
+    // 物理設定
+    const gravity = 0.5;
+    const maxFallSpeed = 10;
+    let items = [];
+    let particles = [];
+
+    // ステージデータ定義
+    const stages = [
+      {
+        name: "CYBER_LAB",
+        bgColor: "#001122",
+        platforms: [
+          { x: 0, y: 250, width: 200, height: 20 },
+          { x: 250, y: 350, width: 150, height: 20 },
+          { x: 450, y: 280, width: 100, height: 20 },
+          { x: 600, y: 400, width: 200, height: 20 },
+          { x: 300, y: 500, width: 200, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 100, y: 210, width: 30, height: 30, startX: 100, range: 50, velocityX: 1, direction: 1 },
+          { x: 500, y: 240, width: 30, height: 30, startX: 500, range: 40, velocityX: 1.2, direction: -1 }
+        ],
+        items: [
+          { x: 100, y: 220, width: 20, height: 20, type: 'coin' },
+          { x: 480, y: 250, width: 20, height: 20, type: 'coin' },
+          { x: 350, y: 470, width: 20, height: 20, type: 'heart' },
+          { x: 50, y: 180, width: 20, height: 20, type: 'speedBoost' }
+        ],
+        goal: { x: 750, y: 360, width: 30, height: 30 }
+      },
+      {
+        name: "NEON_ALLEYS",
+        bgColor: "#1a0a2a",
+        platforms: [
+          { x: 0, y: 450, width: 100, height: 20 },
+          { x: 150, y: 380, width: 120, height: 20 },
+          { x: 300, y: 310, width: 80, height: 20 },
+          { x: 450, y: 240, width: 150, height: 20 },
+          { x: 650, y: 170, width: 100, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 200, y: 350, width: 30, height: 30, startX: 200, range: 70, velocityX: 1.5, direction: 1 },
+          { x: 500, y: 200, width: 30, height: 30, startX: 500, range: 60, velocityX: 1.8, direction: -1 }
+        ],
+        items: [
+          { x: 200, y: 360, width: 20, height: 20, type: 'coin' },
+          { x: 500, y: 210, width: 20, height: 20, type: 'coin' },
+          { x: 700, y: 140, width: 20, height: 20, type: 'coin' },
+          { x: 350, y: 280, width: 20, height: 20, type: 'highJump' }
+        ],
+        goal: { x: 700, y: 130, width: 30, height: 30 }
+      },
+      {
+        name: "SKY_BRIDGE",
+        bgColor: "#000a1a",
+        platforms: [
+          { x: 0, y: 450, width: 150, height: 20 },
+          { x: 200, y: 350, width: 100, height: 20 },
+          { x: 350, y: 250, width: 80, height: 20 },
+          { x: 500, y: 150, width: 120, height: 20 },
+          { x: 650, y: 300, width: 150, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 250, y: 310, width: 30, height: 30, startX: 250, range: 50, velocityX: 2, direction: 1 },
+          { x: 550, y: 110, width: 30, height: 30, startX: 550, range: 40, velocityX: 2.2, direction: -1 },
+          { x: 700, y: 260, width: 30, height: 30, startX: 700, range: 70, velocityX: 1.5, direction: 1 }
+        ],
+        items: [
+          { x: 250, y: 320, width: 20, height: 20, type: 'coin' },
+          { x: 550, y: 120, width: 20, height: 20, type: 'heart' },
+          { x: 700, y: 270, width: 20, height: 20, type: 'coin' },
+          { x: 400, y: 220, width: 20, height: 20, type: 'shield' }
+        ],
+        goal: { x: 750, y: 260, width: 30, height: 30 }
+      },
+      {
+        name: "URBAN_JUNGLE",
+        bgColor: "#0a1a0a",
+        platforms: [
+          { x: 0, y: 420, width: 180, height: 20 },
+          { x: 230, y: 330, width: 130, height: 20 },
+          { x: 430, y: 470, width: 120, height: 20 },
+          { x: 580, y: 370, width: 180, height: 20 },
+          { x: 80, y: 220, width: 100, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 150, y: 360, width: 30, height: 30, startX: 150, range: 60, velocityX: 1.7, direction: 1 },
+          { x: 300, y: 260, width: 30, height: 30, startX: 300, range: 50, velocityX: 2, direction: -1 },
+          { x: 500, y: 410, width: 30, height: 30, startX: 500, range: 40, velocityX: 1.8, direction: 1 }
+        ],
+        items: [
+          { x: 150, y: 370, width: 20, height: 20, type: 'coin' },
+          { x: 300, y: 270, width: 20, height: 20, type: 'coin' },
+          { x: 500, y: 420, width: 20, height: 20, type: 'heart' },
+          { x: 150, y: 170, width: 20, height: 20, type: 'coin' },
+          { x: 650, y: 320, width: 20, height: 20, type: 'speedBoost' }
+        ],
+        goal: { x: 750, y: 310, width: 30, height: 30 }
+      },
+      {
+        name: "CORE_MATRIX",
+        bgColor: "#2a0a2a",
+        platforms: [
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 },
+          { x: 80, y: 440, width: 180, height: 20 },
+          { x: 300, y: 350, width: 150, height: 20 },
+          { x: 500, y: 260, width: 130, height: 20 },
+          { x: 680, y: 170, width: 100, height: 20 },
+          { x: 150, y: 190, width: 100, height: 20 },
+          { x: 50, y: canvas.height - 150, width: 100, height: 20 },
+          { x: canvas.width - 150, y: canvas.height - 150, width: 100, height: 20 },
+          { x: 200, y: canvas.height - 250, width: 120, height: 20 },
+          { x: canvas.width - 320, y: canvas.height - 250, width: 120, height: 20 },
+          { x: canvas.width / 2 - 250, y: canvas.height - 300, width: 80, height: 20 }
+        ],
+        enemies: [
+          { x: 150, y: 400, width: 40, height: 40, startX: 150, range: 70, velocityX: 2.0, direction: 1 },
+          { x: 370, y: 310, width: 40, height: 40, startX: 370, range: 60, velocityX: 2.3, direction: -1 },
+          { x: 550, y: 220, width: 40, height: 40, startX: 550, range: 50, velocityX: 2.5, direction: 1 }
+        ],
+        items: [
+          { x: 180, y: 410, width: 20, height: 20, type: 'coin' },
+          { x: 400, y: 320, width: 20, height: 20, type: 'coin' },
+          { x: 580, y: 230, width: 20, height: 20, type: 'coin' },
+          { x: 700, y: 130, width: 20, height: 20, type: 'heart' },
+          { x: 200, y: 150, width: 20, height: 20, type: 'shield' },
+          { x: 450, y: 220, width: 20, height: 20, type: 'highJump' },
+          { x: 50, y: canvas.height - 200, radius: 10, type: 'life' },
+          { x: canvas.width - 70, y: canvas.height - 200, radius: 10, type: 'life' },
+          { x: canvas.width / 2, y: canvas.height - 350, radius: 10, type: 'life' }
+        ],
+        goal: { x: 750, y: 120, width: 40, height: 40 }
+      },
+      {
+        name: "CYBER_FORTRESS",
+        bgColor: "#0a0a2a",
+        platforms: [
+          { x: 0, y: 480, width: 180, height: 20 },
+          { x: 180, y: 390, width: 120, height: 20 },
+          { x: 330, y: 290, width: 100, height: 20 },
+          { x: 480, y: 190, width: 120, height: 20 },
+          { x: 630, y: 390, width: 180, height: 20 },
+          { x: 280, y: 490, width: 140, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 250, y: 340, width: 35, height: 35, startX: 250, range: 80, velocityX: 2.2, direction: 1 },
+          { x: 550, y: 140, width: 35, height: 35, startX: 550, range: 60, velocityX: 2.5, direction: -1 },
+          { x: 700, y: 340, width: 35, height: 35, startX: 700, range: 70, velocityX: 2.8, direction: 1 },
+          { x: 350, y: 440, width: 35, height: 35, startX: 350, range: 50, velocityX: 3, direction: -1 }
+        ],
+        items: [
+          { x: 250, y: 350, width: 20, height: 20, type: 'coin' },
+          { x: 550, y: 150, width: 20, height: 20, type: 'coin' },
+          { x: 700, y: 350, width: 20, height: 20, type: 'heart' },
+          { x: 380, y: 250, width: 20, height: 20, type: 'speedBoost' },
+          { x: 350, y: 450, width: 20, height: 20, type: 'shield' }
+        ],
+        goal: { x: 750, y: 340, width: 30, height: 30 }
+      },
+      {
+        name: "NEON_DEPTHS",
+        bgColor: "#2a1a0a",
+        platforms: [
+          { x: 0, y: 460, width: 140, height: 20 },
+          { x: 150, y: 370, width: 100, height: 20 },
+          { x: 280, y: 270, width: 120, height: 20 },
+          { x: 430, y: 420, width: 110, height: 20 },
+          { x: 580, y: 320, width: 140, height: 20 },
+          { x: 730, y: 220, width: 70, height: 20 },
+          { x: 180, y: 520, width: 440, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 200, y: 310, width: 35, height: 35, startX: 200, range: 60, velocityX: 2.5, direction: 1 },
+          { x: 330, y: 210, width: 35, height: 35, startX: 330, range: 50, velocityX: 3, direction: -1 },
+          { x: 500, y: 360, width: 35, height: 35, startX: 500, range: 40, velocityX: 2.8, direction: 1 },
+          { x: 650, y: 260, width: 35, height: 35, startX: 650, range: 70, velocityX: 3.2, direction: -1 },
+          { x: 300, y: 460, width: 35, height: 35, startX: 300, range: 200, velocityX: 2, direction: 1 }
+        ],
+        items: [
+          { x: 200, y: 320, width: 20, height: 20, type: 'coin' },
+          { x: 330, y: 220, width: 20, height: 20, type: 'coin' },
+          { x: 500, y: 370, width: 20, height: 20, type: 'coin' },
+          { x: 650, y: 270, width: 20, height: 20, type: 'highJump' },
+          { x: 400, y: 470, width: 20, height: 20, type: 'heart' },
+          { x: 750, y: 170, width: 20, height: 20, type: 'shield' }
+        ],
+        goal: { x: 750, y: 160, width: 30, height: 30 }
+      },
+      {
+        name: "DIGITAL_STORM",
+        bgColor: "#1a2a1a",
+        platforms: [
+          { x: 0, y: 500, width: 120, height: 20 },
+          { x: 130, y: 430, width: 90, height: 20 },
+          { x: 250, y: 350, width: 110, height: 20 },
+          { x: 390, y: 270, width: 100, height: 20 },
+          { x: 520, y: 190, width: 120, height: 20 },
+          { x: 670, y: 110, width: 130, height: 20 },
+          { x: 80, y: 220, width: 80, height: 20 },
+          { x: 330, y: 460, width: 170, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 180, y: 380, width: 40, height: 40, startX: 180, range: 80, velocityX: 3, direction: 1 },
+          { x: 300, y: 300, width: 40, height: 40, startX: 300, range: 60, velocityX: 3.5, direction: -1 },
+          { x: 440, y: 220, width: 40, height: 40, startX: 440, range: 50, velocityX: 3.2, direction: 1 },
+          { x: 570, y: 140, width: 40, height: 40, startX: 570, range: 70, velocityX: 3.8, direction: -1 },
+          { x: 400, y: 410, width: 40, height: 40, startX: 400, range: 100, velocityX: 2.5, direction: 1 },
+          { x: 130, y: 160, width: 40, height: 40, startX: 130, range: 30, velocityX: 4, direction: -1 }
+        ],
+        items: [
+          { x: 180, y: 390, width: 20, height: 20, type: 'coin' },
+          { x: 300, y: 310, width: 20, height: 20, type: 'coin' },
+          { x: 440, y: 230, width: 20, height: 20, type: 'speedBoost' },
+          { x: 570, y: 150, width: 20, height: 20, type: 'coin' },
+          { x: 720, y: 70, width: 20, height: 20, type: 'heart' },
+          { x: 400, y: 420, width: 20, height: 20, type: 'shield' },
+          { x: 130, y: 170, width: 20, height: 20, type: 'highJump' }
+        ],
+        goal: { x: 750, y: 60, width: 30, height: 30 }
+      },
+      {
+        name: "VOID_NEXUS",
+        bgColor: "#2a0a1a",
+        platforms: [
+          { x: 0, y: 500, width: 100, height: 20 },
+          { x: 110, y: 460, width: 80, height: 20 },
+          { x: 220, y: 390, width: 100, height: 20 },
+          { x: 350, y: 310, width: 90, height: 20 },
+          { x: 470, y: 230, width: 110, height: 20 },
+          { x: 610, y: 150, width: 100, height: 20 },
+          { x: 730, y: 70, width: 70, height: 20 },
+          { x: 80, y: 330, width: 70, height: 20 },
+          { x: 180, y: 250, width: 80, height: 20 },
+          { x: 530, y: 390, width: 120, height: 20 },
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 }
+        ],
+        enemies: [
+          { x: 160, y: 410, width: 40, height: 40, startX: 160, range: 60, velocityX: 3.5, direction: 1 },
+          { x: 270, y: 340, width: 40, height: 40, startX: 270, range: 50, velocityX: 4, direction: -1 },
+          { x: 400, y: 260, width: 40, height: 40, startX: 400, range: 40, velocityX: 3.8, direction: 1 },
+          { x: 520, y: 180, width: 40, height: 40, startX: 520, range: 60, velocityX: 4.2, direction: -1 },
+          { x: 660, y: 100, width: 40, height: 40, startX: 660, range: 50, velocityX: 4.5, direction: 1 },
+          { x: 130, y: 280, width: 40, height: 40, startX: 130, range: 30, velocityX: 3, direction: -1 },
+          { x: 580, y: 340, width: 40, height: 40, startX: 580, range: 70, velocityX: 3.2, direction: 1 }
+        ],
+        items: [
+          { x: 160, y: 420, width: 20, height: 20, type: 'coin' },
+          { x: 270, y: 350, width: 20, height: 20, type: 'speedBoost' },
+          { x: 400, y: 270, width: 20, height: 20, type: 'coin' },
+          { x: 520, y: 190, width: 20, height: 20, type: 'highJump' },
+          { x: 660, y: 110, width: 20, height: 20, type: 'coin' },
+          { x: 770, y: 30, width: 20, height: 20, type: 'heart' },
+          { x: 130, y: 290, width: 20, height: 20, type: 'shield' },
+          { x: 580, y: 350, width: 20, height: 20, type: 'coin' }
+        ],
+        goal: { x: 770, y: 20, width: 30, height: 30 }
+      },
+      {
+        name: "FINAL_CORE",
+        bgColor: "#3a0a3a",
+        platforms: [
+          { x: 0, y: canvas.height - 20, width: canvas.width, height: 20 },
+          { x: 0, y: 510, width: 80, height: 20 },
+          { x: 90, y: 470, width: 70, height: 20 },
+          { x: 170, y: 410, width: 80, height: 20 },
+          { x: 270, y: 350, width: 70, height: 20 },
+          { x: 360, y: 290, width: 90, height: 20 },
+          { x: 470, y: 230, width: 80, height: 20 },
+          { x: 570, y: 170, width: 70, height: 20 },
+          { x: 660, y: 110, width: 80, height: 20 },
+          { x: 730, y: 50, width: 70, height: 20 },
+          { x: 130, y: 330, width: 60, height: 20 },
+          { x: 230, y: 270, width: 60, height: 20 },
+          { x: 330, y: 210, width: 60, height: 20 },
+          { x: 430, y: 150, width: 60, height: 20 },
+          { x: 510, y: 390, width: 100, height: 20 },
+          { x: 630, y: 330, width: 80, height: 20 }
+        ],
+        enemies: [
+          { x: 130, y: 420, width: 45, height: 45, startX: 130, range: 60, velocityX: 4, direction: 1 },
+          { x: 220, y: 360, width: 45, height: 45, startX: 220, range: 50, velocityX: 4.5, direction: -1 },
+          { x: 320, y: 300, width: 45, height: 45, startX: 320, range: 40, velocityX: 4.2, direction: 1 },
+          { x: 410, y: 240, width: 45, height: 45, startX: 410, range: 80, velocityX: 5, direction: -1 },
+          { x: 520, y: 180, width: 45, height: 45, startX: 520, range: 30, velocityX: 4.8, direction: 1 },
+          { x: 620, y: 120, width: 45, height: 45, startX: 620, range: 60, velocityX: 5.2, direction: -1 },
+          { x: 710, y: 60, width: 45, height: 45, startX: 710, range: 40, velocityX: 5.5, direction: 1 },
+          { x: 180, y: 280, width: 45, height: 45, startX: 180, range: 30, velocityX: 4.5, direction: -1 },
+          { x: 380, y: 160, width: 45, height: 45, startX: 380, range: 40, velocityX: 5, direction: 1 },
+          { x: 560, y: 340, width: 45, height: 45, startX: 560, range: 50, velocityX: 4.2, direction: -1 }
+        ],
+        items: [
+          { x: 130, y: 430, width: 20, height: 20, type: 'coin' },
+          { x: 220, y: 370, width: 20, height: 20, type: 'speedBoost' },
+          { x: 320, y: 310, width: 20, height: 20, type: 'coin' },
+          { x: 410, y: 250, width: 20, height: 20, type: 'highJump' },
+          { x: 520, y: 190, width: 20, height: 20, type: 'coin' },
+          { x: 620, y: 130, width: 20, height: 20, type: 'shield' },
+          { x: 710, y: 70, width: 20, height: 20, type: 'coin' },
+          { x: 770, y: 10, width: 20, height: 20, type: 'heart' },
+          { x: 180, y: 290, width: 20, height: 20, type: 'coin' },
+          { x: 380, y: 170, width: 20, height: 20, type: 'coin' },
+          { x: 560, y: 350, width: 20, height: 20, type: 'speedBoost' }
+        ],
+        goal: { x: 770, y: 0, width: 30, height: 30 }
+      }
+    ];
+    let currentStageData = stages[0];
+
+    // 初期化
+    function init() {
+      updateUI();
+      setupEventListeners();
+      gameLoop();
+      setVolume();
+      showMessage('ゲームスタート', 'ボタンを押してゲームを開始！', 'スタート');
+    }
+
+    // ステージリセット
+    function resetStage() {
+      currentStageData = stages[currentStage - 1];
+      currentStageData.enemies.forEach(enemy => {
+        enemy.x = enemy.startX;
+        enemy.direction = 1;
+      });
+      items = currentStageData.items.map(item => ({...item}));
+      particles = [];
+      stageStartTime = Date.now();
+      updateEnemyImageForStage();
+    }
+
+    // ステージに応じた敵画像を設定する関数
+    function updateEnemyImageForStage() {
+      const existingEnemies = document.querySelectorAll('[id^="enemy"], #goburin, #naito, #summon2, #summon3, #summon5');
+      existingEnemies.forEach(img => img.style.display = 'none');
+
+      let enemyId = '';
+      switch (currentStage) {
+        case 1: enemyId = 'enemy1'; break;
+        case 2: enemyId = 'enemy2'; break;
+        case 3: enemyId = 'enemy3'; break;
+        case 4: enemyId = 'enemy4'; break;
+        case 5: enemyId = 'summon5'; break;
+        case 6: enemyId = 'goburin'; break;
+        case 7: enemyId = 'naito'; break;
+        case 8: enemyId = 'summon2'; break;
+        case 9: enemyId = 'summon3'; break;
+        case 10: enemyId = 'enemy5'; break;
+        default: enemyId = 'enemy1'; break;
+      }
+
+      stageEnemyImage = document.getElementById(enemyId);
+      if (stageEnemyImage) {
+        stageEnemyImage.style.display = 'block';
+      } else {
+        console.warn(`Enemy image for stage ${currentStage} (${enemyId}) not found.`);
+      }
+    }
+
+    // UI更新
+    function updateUI() {
+      currentStageSpan.textContent = currentStage;
+      currentStageSpan.nextElementSibling.textContent = `/ ${maxStages}`;
+      currentLifeSpan.textContent = playerLife;
+      const lifeFill = document.querySelector('.life-fill');
+      if (lifeFill) {
+        lifeFill.style.width = `${(playerLife / 3) * 100}%`;
+      }
+    }
+
+    // イベントリスナー
+    function setupEventListeners() {
+      document.addEventListener('keydown', (e) => {
+        if (e.code === 'ArrowLeft') keys.left = true;
+        if (e.code === 'ArrowRight') keys.right = true;
+        if (e.code === 'Space') {
+          if (player.onGround && gameState === 'playing') {
+            playSE(seJump);
+          }
+          keys.space = true;
+          e.preventDefault();
+        }
+      });
+      document.addEventListener('keyup', (e) => {
+        if (e.code === 'ArrowLeft') keys.left = false;
+        if (e.code === 'ArrowRight') keys.right = false;
+        if (e.code === 'Space') keys.space = false;
+      });
+
+      // モバイルコントロール - 改善版
+      // 左ボタン
+      leftBtn.addEventListener('touchstart', (e) => { 
+        keys.left = true; 
+        leftBtn.classList.add('active');
+        e.preventDefault(); 
+      }, { passive: false });
+      leftBtn.addEventListener('touchend', () => { 
+        keys.left = false; 
+        leftBtn.classList.remove('active');
+      });
+      leftBtn.addEventListener('mousedown', () => { 
+        keys.left = true; 
+        leftBtn.classList.add('active');
+      });
+      leftBtn.addEventListener('mouseup', () => { 
+        keys.left = false; 
+        leftBtn.classList.remove('active');
+      });
+
+      // 右ボタン
+      rightBtn.addEventListener('touchstart', (e) => { 
+        keys.right = true; 
+        rightBtn.classList.add('active');
+        e.preventDefault(); 
+      }, { passive: false });
+      rightBtn.addEventListener('touchend', () => { 
+        keys.right = false; 
+        rightBtn.classList.remove('active');
+      });
+      rightBtn.addEventListener('mousedown', () => { 
+        keys.right = true; 
+        rightBtn.classList.add('active');
+      });
+      rightBtn.addEventListener('mouseup', () => { 
+        keys.right = false; 
+        rightBtn.classList.remove('active');
+      });
+
+      // ジャンプボタン - 連打対応改善
+      jumpBtn.addEventListener('touchstart', (e) => {
+        if (player.onGround && gameState === 'playing') {
+          playSE(seJump);
+          keys.space = true;
+        }
+        jumpBtn.classList.add('active');
+        e.preventDefault();
+      }, { passive: false });
+      jumpBtn.addEventListener('touchend', () => { 
+        keys.space = false; 
+        jumpBtn.classList.remove('active');
+      });
+      jumpBtn.addEventListener('mousedown', () => { 
+        if (player.onGround && gameState === 'playing') {
+          playSE(seJump);
+          keys.space = true;
+        }
+        jumpBtn.classList.add('active');
+      });
+      jumpBtn.addEventListener('mouseup', () => { 
+        keys.space = false; 
+        jumpBtn.classList.remove('active');
+      });
+
+      messageButton.addEventListener('click', handleMessageButton);
+      soundToggle.addEventListener('click', toggleSound);
+      volumeDown.addEventListener('click', () => changeVolume(-0.1));
+      volumeUp.addEventListener('click', () => changeVolume(0.1));
+    }
+
+    // メッセージボタン処理
+    function handleMessageButton() {
+      if (gameState === 'menu') {
+        startGame();
+      } else if (gameState === 'gameOver') {
+        restartGame();
+      } else if (gameState === 'stageClear') {
+        nextStage();
+      } else if (gameState === 'gameComplete') {
+        restartGame();
+      }
+    }
+
+    function startGame() {
+      gameState = 'playing';
+      hideMessage();
+      currentStage = 1;
+      playerLife = 3;
+      score = 0;
+      resetPlayerPosition();
+      resetPowerUps();
+      resetStage();
+      updateUI();
+      playBGM();
+    }
+
+    function restartGame() {
+      currentStage = 1;
+      playerLife = 3;
+      score = 0;
+      gameState = 'playing';
+      hideMessage();
+      resetPlayerPosition();
+      resetPowerUps();
+      resetStage();
+      updateUI();
+      playBGM();
+    }
+
+    function nextStage() {
+      if (currentStage < maxStages) {
+        currentStage++;
+        gameState = 'playing';
+        hideMessage();
+        resetPlayerPosition();
+        resetPowerUps();
+        resetStage();
+        updateUI();
+        playBGM();
+      } else {
+        gameState = 'gameComplete';
+        stopBGM();
+        playSE(seStageClear);
+        showMessage('ゲームクリア！', '全ステージクリアおめでとう！', 'もう一度遊ぶ');
+      }
+    }
+
+    function resetPlayerPosition() {
+      player.x = 50;
+      player.y = 200;
+      player.velocityX = 0;
+      player.velocityY = 0;
+      player.onGround = false;
+      player.invulnerable = false;
+      player.invulnerableTime = 0;
+    }
+
+    function resetPowerUps() {
+      player.speedBoostActive = false;
+      player.speedBoostTimer = 0;
+      player.highJumpActive = false;
+      player.highJumpTimer = 0;
+      player.shieldActive = false;
+      player.shieldTimer = 0;
+      player.speed = 5;
+      player.jumpPower = 12;
+    }
+
+    // サウンド関係
+    function setVolume() {
+      bgm.volume = volume;
+      seJump.volume = volume;
+      seCollect.volume = volume;
+      seHit.volume = volume;
+      seStageClear.volume = volume;
+      seGameOver.volume = volume;
+    }
+
+    function playBGM() {
+      if (soundEnabled) {
+        bgm.play().catch(e => console.log("BGM再生エラー:", e));
+      }
+    }
+
+    function stopBGM() {
+      bgm.pause();
+      bgm.currentTime = 0;
+    }
+
+    function playSE(audioElement) {
+      if (soundEnabled) {
+        audioElement.currentTime = 0;
+        audioElement.play().catch(e => console.log("SE再生エラー:", e));
+      }
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      soundToggle.textContent = soundEnabled ? '🎵' : '🔇';
+      if (soundEnabled) {
+        if (gameState === 'playing') {
+          playBGM();
+        }
+        setVolume();
+      } else {
+        stopBGM();
+      }
+    }
+
+    function changeVolume(delta) {
+      volume = Math.max(0, Math.min(1, volume + delta));
+      setVolume();
+    }
+
+    // メッセージ表示/非表示
+    function showMessage(title, text, button) {
+      messageTitle.textContent = title;
+      messageText.textContent = text;
+      messageButton.textContent = button;
+      messageScreen.style.display = 'flex';
+    }
+
+    function hideMessage() {
+      messageScreen.style.display = 'none';
+    }
+
+    // 衝突判定
+    function checkCollision(r1, r2) {
+      return r1.x < r2.x + r2.width &&
+             r1.x + r1.width > r2.x &&
+             r1.y < r2.y + r2.height &&
+             r1.y + r1.height > r2.y;
+    }
+
+    // ライフ減少
+    function loseLife() {
+      if (player.invulnerable || player.shieldActive) return;
+
+      playerLife--;
+      updateUI();
+      playSE(seHit);
+
+      player.invulnerable = true;
+      player.invulnerableTime = 120;
+      createHitParticles(player.x + player.width/2, player.y + player.height/2);
+
+      if (playerLife <= 0) {
+        gameState = 'gameOver';
+        stopBGM();
+        playSE(seGameOver);
+        showMessage('ゲームオーバー', 'ライフがなくなりました', 'リスタート');
+      } else {
+        resetPlayerPosition();
+      }
+    }
+
+    // パーティクル
+    function createHitParticles(x, y) {
+      for (let i = 0; i < 8; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          velocityX: (Math.random() - 0.5) * 10,
+          velocityY: Math.random() * -8 - 2,
+          life: 30,
+          maxLife: 30,
+          color: '#ff4444'
+        });
+      }
+    }
+
+    function createItemParticles(x, y, color) {
+      for (let i = 0; i < 6; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          velocityX: (Math.random() - 0.5) * 6,
+          velocityY: Math.random() * -4 - 1,
+          life: 20,
+          maxLife: 20,
+          color: color
+        });
+      }
+    }
+
+    // プレイヤー処理
+    function updatePlayer() {
+      let currentSpeed = player.speed;
+      let currentJumpPower = player.jumpPower;
+
+      if (player.speedBoostActive) {
+        currentSpeed = player.speed * 1.5;
+        player.speedBoostTimer--;
+        if (player.speedBoostTimer <= 0) {
+          player.speedBoostActive = false;
+        }
+      }
+
+      if (player.highJumpActive) {
+        currentJumpPower = player.jumpPower * 1.5;
+        player.highJumpTimer--;
+        if (player.highJumpTimer <= 0) {
+          player.highJumpActive = false;
+        }
+      }
+
+      if (player.shieldActive) {
+        player.shieldTimer--;
+        if (player.shieldTimer <= 0) {
+          player.shieldActive = false;
+        }
+      }
+
+      if (keys.left) player.velocityX = -currentSpeed;
+      else if (keys.right) player.velocityX = currentSpeed;
+      else player.velocityX = 0;
+
+      if (keys.space && player.onGround) {
+        player.velocityY = -currentJumpPower;
+        player.onGround = false;
+      }
+
+      player.velocityY += gravity;
+      if (player.velocityY > maxFallSpeed) player.velocityY = maxFallSpeed;
+
+      player.x += player.velocityX;
+      player.y += player.velocityY;
+
+      if (player.x < 0) player.x = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+      if (player.y > canvas.height) {
+        loseLife();
+        return;
+      }
+
+      if (player.invulnerable) {
+        player.invulnerableTime--;
+        if (player.invulnerableTime <= 0) {
+          player.invulnerable = false;
+        }
+      }
+
+      player.onGround = false;
+      for (let platform of currentStageData.platforms) {
+        if (
+          player.y + player.height > platform.y &&
+          player.y < platform.y + platform.height &&
+          player.x < platform.x + platform.width &&
+          player.x + player.width > platform.x
+        ) {
+          if (player.velocityY > 0 && player.y + player.height - player.velocityY <= platform.y) {
+            player.y = platform.y - player.height;
+            player.velocityY = 0;
+            player.onGround = true;
+          } else if (player.velocityY < 0 && player.y >= platform.y + platform.height - player.velocityY) {
+            player.y = platform.y + platform.height;
+            player.velocityY = 0;
+          }
+        }
+      }
+    }
+
+    // 敵処理
+    function updateEnemies() {
+      for (let enemy of currentStageData.enemies) {
+        enemy.x += enemy.velocityX * enemy.direction;
+        if (Math.abs(enemy.x - enemy.startX) >= enemy.range) enemy.direction *= -1;
+        if (!player.invulnerable && !player.shieldActive && checkCollision(player, enemy)) {
+          loseLife();
+          return;
+        }
+      }
+    }
+
+    // アイテム処理
+    function updateItems() {
+      for (let i = items.length - 1; i >= 0; i--) {
+        let item = items[i];
+        if (item.collected) continue;
+
+        if (checkCollision(player, item)) {
+          item.collected = true;
+          playSE(seCollect);
+
+          if (item.type === 'coin') {
+            score += 100;
+            createItemParticles(item.x + item.width/2, item.y + item.height/2, '#ffd700');
+          } else if (item.type === 'heart') {
+            if (playerLife < 5) {
+              playerLife++;
+              updateUI();
+            }
+            createItemParticles(item.x + item.width/2, item.y + item.height/2, '#ff6666');
+          } else if (item.type === 'speedBoost') {
+            player.speedBoostActive = true;
+            player.speedBoostTimer = 300;
+            createItemParticles(item.x + item.width/2, item.y + item.height/2, '#00ffff');
+          } else if (item.type === 'highJump') {
+            player.highJumpActive = true;
+            player.highJumpTimer = 300;
+            createItemParticles(item.x + item.width/2, item.y + item.height/2, '#ff00ff');
+          } else if (item.type === 'shield') {
+            player.shieldActive = true;
+            player.shieldTimer = 300;
+            createItemParticles(item.x + item.width/2, item.y + item.height/2, '#ffff00');
+          }
+          items.splice(i, 1);
+        }
+      }
+    }
+
+    // ゴール判定
+    function checkGoal() {
+      if (checkCollision(player, currentStageData.goal)) {
+        stopBGM();
+        playSE(seStageClear);
+        if (currentStage < maxStages) {
+          gameState = 'stageClear';
+          const timeBonus = Math.max(0, 30 - Math.floor((Date.now() - stageStartTime) / 1000)) * 10;
+          score += 500 + timeBonus;
+          showMessage(
+            `SECTOR ${currentStage} CLEAR!`,
+            `CODE ${currentStageData.name} を突破！\nSCORE: ${score}`,
+            '次のセクターへ'
+          );
+        } else {
+          gameState = 'gameComplete';
+          score += 1000;
+          showMessage('MISSION COMPLETE!', `全セクター攻略完了！\nFINAL SCORE: ${score}`, '再起動');
+        }
+      }
+    }
+
+    // パーティクル更新
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.velocityX;
+        p.y += p.velocityY;
+        p.velocityY += 0.3;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+    }
+
+    // 描画処理
+    function draw() {
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, currentStageData.bgColor);
+      gradient.addColorStop(1, '#000000');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00ff88';
+      ctx.strokeStyle = '#00cc66';
+      ctx.lineWidth = 2;
+      for (let platform of currentStageData.platforms) {
+        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+        ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+      }
+
+      for (let enemy of currentStageData.enemies) {
+        if (stageEnemyImage && stageEnemyImage.complete && stageEnemyImage.naturalWidth > 0) {
+          ctx.drawImage(stageEnemyImage, enemy.x, enemy.y, enemy.width, enemy.height);
+        } else {
+          ctx.fillStyle = '#ff4444';
+          ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+        }
+      }
+
+      for (let item of items) {
+        let itemColor = '';
+        switch (item.type) {
+          case 'coin': itemColor = '#ffd700'; break;
+          case 'heart': itemColor = '#ff6666'; break;
+          case 'speedBoost': itemColor = '#00ffff'; break;
+          case 'highJump': itemColor = '#ff00ff'; break;
+          case 'shield': itemColor = '#ffff00'; break;
+          default: itemColor = '#cccccc'; break;
+        }
+        ctx.fillStyle = itemColor;
+        ctx.fillRect(item.x, item.y, item.width, item.height);
+      }
+
+      const goal = currentStageData.goal;
+      ctx.fillStyle = '#ffff00';
+      ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+
+      let playerDrawAlpha = 1;
+      if (player.invulnerable && Math.floor(player.invulnerableTime / 5) % 2 !== 0) {
+        playerDrawAlpha = 0.4;
+      }
+
+      if (player.shieldActive) {
+        ctx.globalAlpha = 0.5 + Math.sin(Date.now() * 0.01) * 0.2;
+        ctx.strokeStyle = '#00ffff';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(player.x + player.width / 2, player.y + player.height / 2, player.width * 0.8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.globalAlpha = playerDrawAlpha;
+      if (playerImage.complete && playerImage.naturalWidth > 0) {
+        ctx.drawImage(playerImage, player.x, player.y, player.width, player.height);
+      } else {
+        ctx.fillStyle = '#4444ff';
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+      }
+      ctx.globalAlpha = 1;
+
+      for (let p of particles) {
+        const alpha = p.life / p.maxLife;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '16px "Press Start 2P", cursive';
+      ctx.fillText(`SCORE: ${score}`, 10, canvas.height - 20);
+
+      let hudY = canvas.height - 40;
+      if (player.speedBoostActive) {
+        ctx.fillStyle = '#00ffff';
+        ctx.fillText(`SPEED: ${Math.ceil(player.speedBoostTimer / 60)}s`, canvas.width - 150, hudY);
+        hudY -= 20;
+      }
+      if (player.highJumpActive) {
+        ctx.fillStyle = '#ff00ff';
+        ctx.fillText(`JUMP: ${Math.ceil(player.highJumpTimer / 60)}s`, canvas.width - 150, hudY);
+        hudY -= 20;
+      }
+      if (player.shieldActive) {
+        ctx.fillStyle = '#ffff00';
+        ctx.fillText(`SHIELD: ${Math.ceil(player.shieldTimer / 60)}s`, canvas.width - 150, hudY);
+        hudY -= 20;
+      }
+    }
+
+    // メインループ
+    function gameLoop() {
+      requestAnimationFrame(gameLoop);
+      if (gameState !== 'playing') return;
+      updatePlayer();
+      updateEnemies();
+      updateItems();
+      updateParticles();
+      checkGoal();
+      draw();
+    }
+
+    init();
+  </script>
 </body>
 </html>
