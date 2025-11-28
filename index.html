@@ -38,7 +38,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* サイバー背景エフェクト */
     .cyber-bg {
       position: fixed;
       top: 0;
@@ -68,7 +67,6 @@
       to { transform: translate(50px, 50px); }
     }
 
-    /* ゲームコンテナ */
     #gameContainer {
       position: relative;
       width: 800px;
@@ -86,7 +84,6 @@
       background: linear-gradient(to bottom, #0a0a1a, #000);
     }
 
-    /* HUD */
     #gameInfo {
       position: absolute;
       top: 0;
@@ -120,40 +117,72 @@
       text-shadow: 0 0 10px var(--neon-yellow);
     }
 
-    /* モバイルコントロール */
+    #soundControls {
+      display: flex;
+      gap: 5px;
+    }
+
+    .sound-btn {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 5px;
+      color: var(--neon-cyan);
+      padding: 5px 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sound-btn:hover {
+      background: rgba(0, 255, 255, 0.2);
+    }
+
+    .sound-btn.muted {
+      opacity: 0.5;
+      border-color: #666;
+      color: #666;
+    }
+
     #mobileControls {
       display: none;
     }
 
     .control-btn {
       background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-dark));
-      border: 2px solid var(--neon-cyan);
-      border-radius: 15px;
+      border: 3px solid var(--neon-cyan);
+      border-radius: 50%;
       color: var(--neon-cyan);
-      font-size: 24px;
+      font-size: 28px;
       font-weight: bold;
       cursor: pointer;
       touch-action: manipulation;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.1s;
+      text-shadow: 0 0 10px var(--neon-cyan);
     }
 
     .control-btn:active {
-      transform: scale(0.95);
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+      transform: scale(0.92);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.9), inset 0 2px 15px rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, var(--neon-cyan), var(--cyber-blue));
     }
 
     .jump-btn {
-      background: linear-gradient(135deg, var(--neon-pink), var(--cyber-dark));
+      background: linear-gradient(135deg, #660066, var(--cyber-dark));
       border-color: var(--neon-pink);
       color: var(--neon-pink);
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+      box-shadow: 0 0 20px rgba(255, 0, 255, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.1);
+      text-shadow: 0 0 10px var(--neon-pink);
     }
 
-    /* メッセージスクリーン */
+    .jump-btn:active {
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.9), inset 0 2px 15px rgba(255, 255, 255, 0.2);
+      background: linear-gradient(135deg, var(--neon-pink), #660066);
+    }
+
     #messageScreen {
       position: absolute;
       top: 0;
@@ -204,6 +233,7 @@
       cursor: pointer;
       transition: all 0.3s;
       box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
+      font-family: 'Orbitron', monospace;
     }
 
     .start-btn:hover {
@@ -211,7 +241,6 @@
       box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
     }
 
-    /* レスポンシブ対応 */
     @media (max-width: 768px) {
       #gameContainer {
         width: 100vw;
@@ -221,16 +250,28 @@
       }
 
       #gameInfo {
-        font-size: 12px;
+        font-size: 10px;
         padding: 5px 10px;
+        flex-wrap: wrap;
+        gap: 5px;
       }
 
       .info-item {
         padding: 3px 8px;
+        font-size: 9px;
       }
 
       .info-value {
-        font-size: 14px;
+        font-size: 12px;
+      }
+
+      #soundControls {
+        gap: 3px;
+      }
+
+      .sound-btn {
+        padding: 3px 6px;
+        font-size: 12px;
       }
 
       #mobileControls {
@@ -246,27 +287,60 @@
 
       #leftBtn, #rightBtn {
         position: absolute;
-        bottom: 20px;
-        width: 70px;
-        height: 70px;
+        bottom: 25px;
+        width: 75px;
+        height: 75px;
         pointer-events: auto;
       }
 
-      #leftBtn {
-        left: 20px;
-      }
-
-      #rightBtn {
-        left: 100px;
-      }
+      #leftBtn { left: 20px; }
+      #rightBtn { left: 110px; }
 
       #jumpBtn {
         position: absolute;
-        bottom: 20px;
+        bottom: 25px;
         right: 20px;
-        width: 90px;
-        height: 90px;
+        width: 100px;
+        height: 100px;
         pointer-events: auto;
+        font-size: 32px;
+      }
+    }
+
+    @media (max-width: 768px) and (orientation: landscape) {
+      #gameInfo { padding: 3px 8px; }
+      .info-item { padding: 2px 6px; font-size: 8px; }
+      .info-value { font-size: 10px; }
+
+      #leftBtn, #rightBtn {
+        bottom: 15px;
+        width: 60px;
+        height: 60px;
+        font-size: 22px;
+      }
+      #leftBtn { left: 15px; }
+      #rightBtn { left: 85px; }
+      #jumpBtn {
+        bottom: 15px;
+        right: 15px;
+        width: 80px;
+        height: 80px;
+        font-size: 26px;
+      }
+    }
+
+    @media (max-width: 414px) {
+      #leftBtn, #rightBtn {
+        width: 65px;
+        height: 65px;
+        font-size: 24px;
+      }
+      #leftBtn { left: 15px; }
+      #rightBtn { left: 90px; }
+      #jumpBtn {
+        width: 85px;
+        height: 85px;
+        font-size: 28px;
       }
     }
   </style>
@@ -290,6 +364,10 @@
         <span>SCORE</span>
         <span id="currentScore" class="info-value">0</span>
       </div>
+      <div id="soundControls">
+        <button id="bgmToggle" class="sound-btn" title="BGM">🎵</button>
+        <button id="seToggle" class="sound-btn" title="効果音">🔊</button>
+      </div>
     </div>
 
     <canvas id="gameCanvas" width="800" height="600"></canvas>
@@ -297,7 +375,7 @@
     <div id="mobileControls">
       <button id="leftBtn" class="control-btn">◀</button>
       <button id="rightBtn" class="control-btn">▶</button>
-      <button id="jumpBtn" class="control-btn jump-btn">⬆</button>
+      <button id="jumpBtn" class="control-btn jump-btn">▲</button>
     </div>
 
     <div id="messageScreen">
@@ -310,7 +388,156 @@
   </div>
 
   <script>
-    // ゲーム設定
+    // ===== オーディオシステム（iOS対応・変更なし） =====
+    const AudioSystem = {
+      bgm: null,
+      bgmBoss: null,
+      currentBGM: null,
+      bgmEnabled: true,
+      seEnabled: true,
+      volume: 0.5,
+      audioContext: null,
+      initialized: false,
+
+      init: function() {
+        if (this.initialized) return;
+        this.bgm = new Audio('audio/Neon Circuitry.mp3');
+        this.bgm.loop = true;
+        this.bgm.volume = this.volume;
+        this.bgmBoss = new Audio('audio/tobu.mp3');
+        this.bgmBoss.loop = true;
+        this.bgmBoss.volume = this.volume;
+        this.initialized = true;
+      },
+
+      playBGM: function(isBoss = false) {
+        if (!this.bgmEnabled) return;
+        this.stopBGM();
+        this.currentBGM = isBoss ? this.bgmBoss : this.bgm;
+        if (this.currentBGM) {
+          this.currentBGM.currentTime = 0;
+          this.currentBGM.volume = this.volume;
+          this.currentBGM.play().catch(e => console.log('BGM再生待機中'));
+        }
+      },
+
+      stopBGM: function() {
+        if (this.currentBGM) {
+          this.currentBGM.pause();
+          this.currentBGM.currentTime = 0;
+        }
+      },
+
+      pauseBGM: function() {
+        if (this.currentBGM) this.currentBGM.pause();
+      },
+
+      resumeBGM: function() {
+        if (this.bgmEnabled && this.currentBGM) {
+          this.currentBGM.play().catch(e => {});
+        }
+      },
+
+      playSE: function(type) {
+        if (!this.seEnabled) return;
+        if (!this.audioContext) {
+          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        const ctx = this.audioContext;
+        const now = ctx.currentTime;
+
+        switch(type) {
+          case 'jump':
+            this.playTone(ctx, 400, 0.1, 'square', now, 600);
+            break;
+          case 'coin':
+            this.playTone(ctx, 800, 0.1, 'square', now);
+            this.playTone(ctx, 1000, 0.1, 'square', now + 0.1);
+            break;
+          case 'heart':
+            this.playTone(ctx, 600, 0.15, 'sine', now);
+            this.playTone(ctx, 800, 0.15, 'sine', now + 0.1);
+            this.playTone(ctx, 1000, 0.15, 'sine', now + 0.2);
+            break;
+          case 'powerup':
+            for (let i = 0; i < 5; i++) {
+              this.playTone(ctx, 400 + i * 100, 0.08, 'square', now + i * 0.05);
+            }
+            break;
+          case 'hit':
+            this.playNoise(ctx, 0.2, now);
+            this.playTone(ctx, 150, 0.3, 'sawtooth', now);
+            break;
+          case 'clear':
+            [523, 659, 784, 1047].forEach((f, i) => this.playTone(ctx, f, 0.2, 'square', now + i * 0.15));
+            break;
+          case 'gameover':
+            this.playTone(ctx, 400, 0.3, 'sawtooth', now);
+            this.playTone(ctx, 300, 0.3, 'sawtooth', now + 0.3);
+            this.playTone(ctx, 200, 0.5, 'sawtooth', now + 0.6);
+            break;
+          case 'victory':
+            [523, 659, 784, 659, 784, 1047].forEach((f, i) => this.playTone(ctx, f, 0.2, 'square', now + i * 0.12));
+            break;
+        }
+      },
+
+      playTone: function(ctx, freq, duration, type, startTime, endFreq = null) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        if (endFreq) osc.frequency.linearRampToValueAtTime(endFreq, startTime + duration);
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration);
+      },
+
+      playNoise: function(ctx, duration, startTime) {
+        const bufferSize = ctx.sampleRate * duration;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        const gain = ctx.createGain();
+        noise.buffer = buffer;
+        gain.gain.setValueAtTime(0.3, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+        noise.connect(gain);
+        gain.connect(ctx.destination);
+        noise.start(startTime);
+      },
+
+      toggleBGM: function() {
+        this.bgmEnabled = !this.bgmEnabled;
+        this.bgmEnabled ? this.resumeBGM() : this.pauseBGM();
+        return this.bgmEnabled;
+      },
+
+      toggleSE: function() {
+        this.seEnabled = !this.seEnabled;
+        return this.seEnabled;
+      }
+    };
+
+    // ===== 画像読み込み（変更なし） =====
+    const images = {
+      player: new Image(),
+      enemies: { rabbit: new Image(), ghost: new Image(), bomb: new Image(), fire: new Image(), boss: new Image() }
+    };
+    images.player.src = 'image_0.png';
+    images.enemies.rabbit.src = 'enemy8.png';
+    images.enemies.ghost.src = 'image_1.png';
+    images.enemies.bomb.src = 'enemy10.png';
+    images.enemies.fire.src = 'image_3.png';
+    images.enemies.boss.src = 'maou.png';
+    
+    const stageEnemyMapping = { 1:'rabbit', 2:'rabbit', 3:'ghost', 4:'ghost', 5:'bomb', 6:'bomb', 7:'fire', 8:'fire', 9:'fire', 10:'boss' };
+
+    // ===== ゲーム設定 =====
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const messageScreen = document.getElementById('messageScreen');
@@ -321,7 +548,6 @@
     const currentLifeSpan = document.getElementById('currentLife');
     const currentScoreSpan = document.getElementById('currentScore');
 
-    // ゲーム状態
     let gameState = 'menu';
     let currentStage = 1;
     let playerLife = 3;
@@ -329,427 +555,122 @@
     let animationId = null;
     const keys = { left: false, right: false, space: false };
 
-    // プレイヤー設定
-    const player = {
-      x: 50, y: 200,
-      width: 30, height: 40,
-      velocityX: 0, velocityY: 0,
-      speed: 5, jumpPower: 12,
-      onGround: false,
-      invulnerable: false,
-      invulnerableTime: 0,
-      color: '#00ff00'
-    };
-
-    // 物理設定
+    const player = { x: 50, y: 200, width: 40, height: 40, velocityX: 0, velocityY: 0, speed: 5, jumpPower: 12, onGround: false, invulnerable: false, invulnerableTime: 0, color: '#00ff00' };
     const gravity = 0.5;
     const maxFallSpeed = 10;
-    let platforms = [];
-    let enemies = [];
-    let items = [];
-    let particles = [];
+    let platforms = [], enemies = [], items = [], particles = [];
     let goal = { x: 750, y: 100, width: 30, height: 40 };
+    let powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } };
 
-    // パワーアップ状態
-    let powerUps = {
-      speedBoost: { active: false, timer: 0 },
-      highJump: { active: false, timer: 0 },
-      shield: { active: false, timer: 0 }
-    };
-
-    // 10ステージのデータ
+    // ===== ステージデータ（更新版：ステージ4難易度調整済み） =====
     const stageData = [
-      // Stage 1 - 簡単な入門ステージ
-      {
-        name: "CYBER START",
-        bgColor: "#001122",
+      { name: "CYBER START", bgColor: "#001122", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 450, width: 100, height: 20 },{ x: 300, y: 350, width: 150, height: 20 },{ x: 500, y: 400, width: 100, height: 20 },{ x: 650, y: 300, width: 100, height: 20 }], enemies: [{ x: 350, y: 310, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 150, y: 410, type: 'coin' },{ x: 375, y: 310, type: 'heart' },{ x: 550, y: 360, type: 'coin' }], goalY: 260 },
+      { name: "NEON CITY", bgColor: "#0a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 80, height: 20 },{ x: 200, y: 400, width: 100, height: 20 },{ x: 350, y: 330, width: 80, height: 20 },{ x: 480, y: 280, width: 120, height: 20 },{ x: 650, y: 200, width: 100, height: 20 }], enemies: [{ x: 250, y: 360, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 500, y: 240, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 120, y: 430, type: 'coin' },{ x: 390, y: 290, type: 'speedBoost' },{ x: 530, y: 240, type: 'coin' }], goalY: 160 },
+      { name: "DATA STREAM", bgColor: "#1a0a1a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 60, height: 20 },{ x: 150, y: 430, width: 80, height: 20 },{ x: 270, y: 380, width: 60, height: 20 },{ x: 370, y: 320, width: 100, height: 20 },{ x: 520, y: 270, width: 80, height: 20 },{ x: 650, y: 220, width: 100, height: 20 }], enemies: [{ x: 200, y: 390, width: 40, height: 40, speed: 2, range: 60 },{ x: 420, y: 280, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 560, y: 230, width: 40, height: 40, speed: 1, range: 60 }], items: [{ x: 80, y: 440, type: 'coin' },{ x: 300, y: 340, type: 'highJump' },{ x: 420, y: 280, type: 'heart' },{ x: 690, y: 180, type: 'coin' }], goalY: 180 },
+      
+      // ★ここが修正したステージ4です
+      { 
+        name: "MATRIX ZONE", 
+        bgColor: "#0a1a1a", 
         platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 100, y: 450, width: 100, height: 20 },
-          { x: 300, y: 350, width: 150, height: 20 },
-          { x: 500, y: 400, width: 100, height: 20 },
-          { x: 650, y: 300, width: 100, height: 20 }
-        ],
+          { x: 0, y: 550, width: 800, height: 50 }, // 地面
+          { x: 50, y: 480, width: 100, height: 20 }, // 1段目(安全)
+          { x: 200, y: 430, width: 80, height: 20, type: 'blinking', timer: 0 }, // 2段目(点滅・敵なし)
+          { x: 350, y: 380, width: 150, height: 20 }, // 3段目(広い・敵あり)
+          { x: 550, y: 330, width: 80, height: 20, type: 'blinking', timer: 150 }, // 4段目(点滅・敵なし)
+          { x: 680, y: 250, width: 100, height: 20 } // ゴール前
+        ], 
         enemies: [
-          { x: 350, y: 310, width: 30, height: 30, speed: 1, range: 100 }
-        ],
+          { x: 380, y: 340, width: 40, height: 40, speed: 1, range: 100 }, // 3段目の敵
+          { x: 600, y: 510, width: 40, height: 40, speed: 2, range: 150 }  // 落ちた時用の敵
+        ], 
         items: [
-          { x: 150, y: 410, type: 'coin' },
-          { x: 375, y: 310, type: 'heart' },
-          { x: 550, y: 360, type: 'coin' }
-        ],
-        goalY: 260
+          { x: 70, y: 440, type: 'coin' },
+          { x: 400, y: 340, type: 'shield' }, 
+          { x: 700, y: 210, type: 'heart' }
+        ], 
+        goalY: 210 
       },
-      // Stage 2
-      {
-        name: "NEON CITY",
-        bgColor: "#0a0a2a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 80, y: 470, width: 80, height: 20 },
-          { x: 200, y: 400, width: 100, height: 20 },
-          { x: 350, y: 330, width: 80, height: 20 },
-          { x: 480, y: 280, width: 120, height: 20 },
-          { x: 650, y: 200, width: 100, height: 20 }
-        ],
-        enemies: [
-          { x: 250, y: 360, width: 30, height: 30, speed: 1.5, range: 80 },
-          { x: 500, y: 240, width: 30, height: 30, speed: 1, range: 100 }
-        ],
-        items: [
-          { x: 120, y: 430, type: 'coin' },
-          { x: 390, y: 290, type: 'speedBoost' },
-          { x: 530, y: 240, type: 'coin' }
-        ],
-        goalY: 160
-      },
-      // Stage 3
-      {
-        name: "DATA STREAM",
-        bgColor: "#1a0a1a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 50, y: 480, width: 60, height: 20 },
-          { x: 150, y: 430, width: 80, height: 20 },
-          { x: 270, y: 380, width: 60, height: 20 },
-          { x: 370, y: 320, width: 100, height: 20 },
-          { x: 520, y: 270, width: 80, height: 20 },
-          { x: 650, y: 220, width: 100, height: 20 }
-        ],
-        enemies: [
-          { x: 200, y: 390, width: 30, height: 30, speed: 2, range: 60 },
-          { x: 420, y: 280, width: 30, height: 30, speed: 1.5, range: 80 },
-          { x: 560, y: 230, width: 30, height: 30, speed: 1, range: 60 }
-        ],
-        items: [
-          { x: 80, y: 440, type: 'coin' },
-          { x: 300, y: 340, type: 'highJump' },
-          { x: 420, y: 280, type: 'heart' },
-          { x: 690, y: 180, type: 'coin' }
-        ],
-        goalY: 180
-      },
-      // Stage 4
-      {
-        name: "MATRIX ZONE",
-        bgColor: "#0a1a1a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 100, y: 500, width: 70, height: 20 },
-          { x: 220, y: 450, width: 70, height: 20 },
-          { x: 340, y: 400, width: 70, height: 20 },
-          { x: 460, y: 350, width: 70, height: 20 },
-          { x: 580, y: 300, width: 70, height: 20 },
-          { x: 700, y: 250, width: 80, height: 20 }
-        ],
-        enemies: [
-          { x: 250, y: 410, width: 30, height: 30, speed: 2, range: 50 },
-          { x: 370, y: 360, width: 30, height: 30, speed: 2.5, range: 50 },
-          { x: 490, y: 310, width: 30, height: 30, speed: 2, range: 50 },
-          { x: 610, y: 260, width: 30, height: 30, speed: 1.5, range: 50 }
-        ],
-        items: [
-          { x: 135, y: 460, type: 'coin' },
-          { x: 255, y: 410, type: 'shield' },
-          { x: 495, y: 310, type: 'coin' },
-          { x: 615, y: 260, type: 'heart' }
-        ],
-        goalY: 210
-      },
-      // Stage 5 - 中間地点
-      {
-        name: "CYBER CORE",
-        bgColor: "#2a0a2a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 80, y: 490, width: 100, height: 20 },
-          { x: 230, y: 430, width: 60, height: 20 },
-          { x: 340, y: 370, width: 100, height: 20 },
-          { x: 490, y: 310, width: 60, height: 20 },
-          { x: 600, y: 250, width: 100, height: 20 },
-          { x: 400, y: 480, width: 80, height: 20 }
-        ],
-        enemies: [
-          { x: 130, y: 450, width: 30, height: 30, speed: 2, range: 80 },
-          { x: 260, y: 390, width: 30, height: 30, speed: 2.5, range: 40 },
-          { x: 390, y: 330, width: 30, height: 30, speed: 3, range: 80 },
-          { x: 520, y: 270, width: 30, height: 30, speed: 2, range: 40 },
-          { x: 650, y: 210, width: 30, height: 30, speed: 2.5, range: 80 }
-        ],
-        items: [
-          { x: 130, y: 450, type: 'speedBoost' },
-          { x: 390, y: 330, type: 'heart' },
-          { x: 440, y: 440, type: 'coin' },
-          { x: 650, y: 210, type: 'shield' }
-        ],
-        goalY: 210
-      },
-      // Stage 6
-      {
-        name: "DIGITAL VOID",
-        bgColor: "#1a1a2a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 60, y: 500, width: 60, height: 20 },
-          { x: 170, y: 460, width: 60, height: 20 },
-          { x: 280, y: 420, width: 60, height: 20 },
-          { x: 390, y: 380, width: 60, height: 20 },
-          { x: 500, y: 340, width: 60, height: 20 },
-          { x: 610, y: 300, width: 60, height: 20 },
-          { x: 720, y: 260, width: 60, height: 20 }
-        ],
-        enemies: [
-          { x: 200, y: 420, width: 30, height: 30, speed: 2.5, range: 50 },
-          { x: 310, y: 380, width: 30, height: 30, speed: 3, range: 50 },
-          { x: 420, y: 340, width: 30, height: 30, speed: 2.5, range: 50 },
-          { x: 530, y: 300, width: 30, height: 30, speed: 3, range: 50 },
-          { x: 640, y: 260, width: 30, height: 30, speed: 2.5, range: 50 }
-        ],
-        items: [
-          { x: 90, y: 460, type: 'coin' },
-          { x: 310, y: 380, type: 'highJump' },
-          { x: 530, y: 300, type: 'heart' },
-          { x: 750, y: 220, type: 'coin' }
-        ],
-        goalY: 220
-      },
-      // Stage 7
-      {
-        name: "NEON NEXUS",
-        bgColor: "#2a1a0a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 100, y: 480, width: 50, height: 20 },
-          { x: 200, y: 420, width: 50, height: 20 },
-          { x: 300, y: 360, width: 50, height: 20 },
-          { x: 400, y: 300, width: 50, height: 20 },
-          { x: 500, y: 240, width: 50, height: 20 },
-          { x: 600, y: 180, width: 50, height: 20 },
-          { x: 700, y: 120, width: 80, height: 20 }
-        ],
-        enemies: [
-          { x: 125, y: 440, width: 30, height: 30, speed: 3, range: 30 },
-          { x: 225, y: 380, width: 30, height: 30, speed: 3.5, range: 30 },
-          { x: 325, y: 320, width: 30, height: 30, speed: 3, range: 30 },
-          { x: 425, y: 260, width: 30, height: 30, speed: 3.5, range: 30 },
-          { x: 525, y: 200, width: 30, height: 30, speed: 3, range: 30 },
-          { x: 625, y: 140, width: 30, height: 30, speed: 3.5, range: 30 }
-        ],
-        items: [
-          { x: 225, y: 380, type: 'speedBoost' },
-          { x: 425, y: 260, type: 'shield' },
-          { x: 625, y: 140, type: 'heart' },
-          { x: 740, y: 80, type: 'coin' }
-        ],
-        goalY: 80
-      },
-      // Stage 8
-      {
-        name: "QUANTUM LEAP",
-        bgColor: "#0a2a2a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 80, y: 470, width: 40, height: 20 },
-          { x: 180, y: 390, width: 40, height: 20 },
-          { x: 280, y: 310, width: 40, height: 20 },
-          { x: 380, y: 230, width: 40, height: 20 },
-          { x: 480, y: 310, width: 40, height: 20 },
-          { x: 580, y: 390, width: 40, height: 20 },
-          { x: 680, y: 470, width: 40, height: 20 },
-          { x: 750, y: 150, width: 50, height: 20 }
-        ],
-        enemies: [
-          { x: 100, y: 430, width: 30, height: 30, speed: 3.5, range: 20 },
-          { x: 200, y: 350, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 300, y: 270, width: 30, height: 30, speed: 3.5, range: 20 },
-          { x: 400, y: 190, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 500, y: 270, width: 30, height: 30, speed: 3.5, range: 20 },
-          { x: 600, y: 350, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 700, y: 430, width: 30, height: 30, speed: 3.5, range: 20 }
-        ],
-        items: [
-          { x: 200, y: 350, type: 'highJump' },
-          { x: 400, y: 190, type: 'speedBoost' },
-          { x: 600, y: 350, type: 'shield' },
-          { x: 775, y: 110, type: 'heart' }
-        ],
-        goalY: 110
-      },
-      // Stage 9
-      {
-        name: "CYBER STORM",
-        bgColor: "#3a0a3a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 50, y: 500, width: 40, height: 20 },
-          { x: 130, y: 450, width: 40, height: 20 },
-          { x: 210, y: 400, width: 40, height: 20 },
-          { x: 290, y: 350, width: 40, height: 20 },
-          { x: 370, y: 300, width: 40, height: 20 },
-          { x: 450, y: 250, width: 40, height: 20 },
-          { x: 530, y: 200, width: 40, height: 20 },
-          { x: 610, y: 150, width: 40, height: 20 },
-          { x: 690, y: 100, width: 40, height: 20 },
-          { x: 760, y: 50, width: 40, height: 20 }
-        ],
-        enemies: [
-          { x: 70, y: 460, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 150, y: 410, width: 30, height: 30, speed: 4.5, range: 20 },
-          { x: 230, y: 360, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 310, y: 310, width: 30, height: 30, speed: 4.5, range: 20 },
-          { x: 390, y: 260, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 470, y: 210, width: 30, height: 30, speed: 4.5, range: 20 },
-          { x: 550, y: 160, width: 30, height: 30, speed: 4, range: 20 },
-          { x: 630, y: 110, width: 30, height: 30, speed: 4.5, range: 20 }
-        ],
-        items: [
-          { x: 230, y: 360, type: 'speedBoost' },
-          { x: 390, y: 260, type: 'highJump' },
-          { x: 550, y: 160, type: 'shield' },
-          { x: 780, y: 10, type: 'heart' }
-        ],
-        goalY: 10
-      },
-      // Stage 10 - 最終ステージ
-      {
-        name: "FINAL CORE",
-        bgColor: "#4a0a4a",
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 },
-          { x: 60, y: 490, width: 30, height: 20 },
-          { x: 120, y: 430, width: 30, height: 20 },
-          { x: 180, y: 370, width: 30, height: 20 },
-          { x: 240, y: 310, width: 30, height: 20 },
-          { x: 300, y: 250, width: 30, height: 20 },
-          { x: 360, y: 190, width: 30, height: 20 },
-          { x: 420, y: 250, width: 30, height: 20 },
-          { x: 480, y: 310, width: 30, height: 20 },
-          { x: 540, y: 370, width: 30, height: 20 },
-          { x: 600, y: 430, width: 30, height: 20 },
-          { x: 660, y: 490, width: 30, height: 20 },
-          { x: 720, y: 130, width: 60, height: 20 }
-        ],
-        enemies: [
-          { x: 90, y: 450, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 150, y: 390, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 210, y: 330, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 270, y: 270, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 330, y: 210, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 390, y: 150, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 450, y: 210, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 510, y: 270, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 570, y: 330, width: 30, height: 30, speed: 5, range: 20 },
-          { x: 630, y: 390, width: 30, height: 30, speed: 5, range: 20 }
-        ],
-        items: [
-          { x: 270, y: 210, type: 'speedBoost' },
-          { x: 330, y: 150, type: 'highJump' },
-          { x: 510, y: 270, type: 'shield' },
-          { x: 750, y: 90, type: 'heart' }
-        ],
-        goalY: 90
-      }
+
+      { name: "CYBER CORE", bgColor: "#2a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 490, width: 100, height: 20, type: 'moving', vx: 2, minX: 50, maxX: 200 },{ x: 230, y: 430, width: 60, height: 20 },{ x: 340, y: 370, width: 100, height: 20, type: 'moving', vx: -2, minX: 300, maxX: 450 },{ x: 490, y: 310, width: 60, height: 20 },{ x: 600, y: 250, width: 100, height: 20, type: 'moving', vx: 1.5, minX: 550, maxX: 700 },{ x: 400, y: 480, width: 80, height: 20 }], enemies: [{ x: 130, y: 450, width: 40, height: 40, speed: 1, range: 80 },{ x: 260, y: 390, width: 40, height: 40, speed: 1.5, range: 40 },{ x: 390, y: 330, width: 40, height: 40, speed: 1.2, range: 80 },{ x: 520, y: 270, width: 40, height: 40, speed: 1, range: 40 },{ x: 650, y: 210, width: 40, height: 40, speed: 1.5, range: 80 }], items: [{ x: 130, y: 450, type: 'speedBoost' },{ x: 390, y: 330, type: 'heart' },{ x: 440, y: 440, type: 'coin' },{ x: 650, y: 210, type: 'shield' }], goalY: 210 },
+      { name: "DIGITAL VOID", bgColor: "#1a1a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 500, width: 60, height: 20, type: 'blinking', timer: 0 },{ x: 170, y: 460, width: 60, height: 20 },{ x: 280, y: 420, width: 60, height: 20, type: 'moving', vx: 1, minX: 250, maxX: 350 },{ x: 390, y: 380, width: 60, height: 20 },{ x: 500, y: 340, width: 60, height: 20, type: 'blinking', timer: 150 },{ x: 610, y: 300, width: 60, height: 20 },{ x: 720, y: 260, width: 60, height: 20 }], enemies: [{ x: 200, y: 420, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 310, y: 380, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 420, y: 340, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 530, y: 300, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 640, y: 260, width: 40, height: 40, speed: 1.5, range: 50 }], items: [{ x: 90, y: 460, type: 'coin' },{ x: 310, y: 380, type: 'highJump' },{ x: 530, y: 300, type: 'heart' },{ x: 750, y: 220, type: 'coin' }], goalY: 220 },
+      { name: "NEON NEXUS", bgColor: "#2a1a0a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 480, width: 50, height: 20 },{ x: 200, y: 420, width: 50, height: 20, type: 'moving', vx: 2, minX: 150, maxX: 250 },{ x: 300, y: 360, width: 50, height: 20 },{ x: 400, y: 300, width: 50, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 240, width: 50, height: 20 },{ x: 600, y: 180, width: 50, height: 20, type: 'moving', vx: -2, minX: 550, maxX: 650 },{ x: 700, y: 120, width: 80, height: 20 }], enemies: [{ x: 125, y: 440, width: 40, height: 40, speed: 1.6, range: 30 },{ x: 225, y: 380, width: 40, height: 40, speed: 1.7, range: 30 },{ x: 325, y: 320, width: 40, height: 40, speed: 1.5, range: 30 },{ x: 425, y: 260, width: 40, height: 40, speed: 3.5, range: 30 },{ x: 525, y: 200, width: 40, height: 40, speed: 1, range: 30 },{ x: 625, y: 140, width: 40, height: 40, speed: 1.5, range: 30 }], items: [{ x: 225, y: 380, type: 'speedBoost' },{ x: 425, y: 260, type: 'shield' },{ x: 625, y: 140, type: 'heart' },{ x: 740, y: 80, type: 'coin' }], goalY: 80 },
+      { name: "QUANTUM LEAP", bgColor: "#0a2a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 180, y: 390, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 280, y: 310, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 380, y: 230, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 480, y: 310, width: 40, height: 20 },{ x: 580, y: 390, width: 40, height: 20, type: 'moving', vx: 2, minX: 550, maxX: 650 },{ x: 680, y: 470, width: 40, height: 20 },{ x: 750, y: 150, width: 50, height: 20 }], enemies: [{ x: 100, y: 430, width: 40, height: 40, speed: 3.5, range: 20 },{ x: 200, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 300, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 400, y: 190, width: 40, height: 40, speed: 2, range: 20 },{ x: 500, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 600, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 700, y: 430, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 200, y: 350, type: 'highJump' },{ x: 400, y: 190, type: 'speedBoost' },{ x: 600, y: 350, type: 'shield' },{ x: 775, y: 110, type: 'heart' }], goalY: 110 },
+      { name: "CYBER STORM", bgColor: "#3a0a3a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 500, width: 40, height: 20 },{ x: 130, y: 450, width: 40, height: 20, type: 'moving', vx: 1.5, minX: 100, maxX: 160 },{ x: 210, y: 400, width: 40, height: 20 },{ x: 290, y: 350, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 370, y: 300, width: 40, height: 20 },{ x: 450, y: 250, width: 40, height: 20, type: 'moving', vx: -1.5, minX: 420, maxX: 480 },{ x: 530, y: 200, width: 40, height: 20 },{ x: 610, y: 150, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 690, y: 100, width: 40, height: 20 },{ x: 760, y: 50, width: 40, height: 20 }], enemies: [{ x: 70, y: 460, width: 40, height: 40, speed: 1.4, range: 20 },{ x: 150, y: 410, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 230, y: 360, width: 40, height: 40, speed: 2, range: 20 },{ x: 310, y: 310, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 390, y: 260, width: 40, height: 40, speed: 2, range: 20 },{ x: 470, y: 210, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 550, y: 160, width: 40, height: 40, speed: 10, range: 20 },{ x: 630, y: 110, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 230, y: 360, type: 'speedBoost' },{ x: 390, y: 260, type: 'highJump' },{ x: 550, y: 160, type: 'shield' },{ x: 780, y: 10, type: 'heart' }], goalY: 10 },
+      { name: "FINAL CORE - 魔王の間", bgColor: "#4a0a4a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 490, width: 50, height: 20 },{ x: 150, y: 430, width: 50, height: 20, type: 'moving', vx: 2, minX: 120, maxX: 180 },{ x: 250, y: 370, width: 50, height: 20 },{ x: 350, y: 310, width: 100, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 370, width: 50, height: 20, type: 'blinking', timer: 150 },{ x: 600, y: 430, width: 50, height: 20, type: 'moving', vx: -2, minX: 570, maxX: 630 },{ x: 700, y: 490, width: 50, height: 20 },{ x: 350, y: 180, width: 100, height: 20 }], enemies: [{ x: 360, y: 100, width: 80, height: 80, speed: 1, range: 60, isBoss: true }], items: [{ x: 100, y: 450, type: 'heart' },{ x: 275, y: 330, type: 'shield' },{ x: 400, y: 270, type: 'speedBoost' },{ x: 525, y: 330, type: 'highJump' },{ x: 650, y: 390, type: 'heart' }], goalY: 140 }
     ];
 
-    // ステージを読み込む関数
     function loadStage(stageIndex) {
       const stage = stageData[stageIndex - 1];
-      platforms = [...stage.platforms];
-      enemies = stage.enemies.map(e => ({
-        ...e,
-        startX: e.x,
-        direction: 1
+      // 床データ読み込み（状態リセットのためにコピー）
+      platforms = stage.platforms.map(p => ({ 
+        ...p, 
+        visible: true, 
+        timer: p.timer || 0 
       }));
-      items = stage.items.map(item => ({
-        ...item,
-        x: item.x,
-        y: item.y,
-        width: 20,
-        height: 20,
-        collected: false
-      }));
+      enemies = stage.enemies.map(e => ({ ...e, startX: e.x, direction: 1, enemyType: stageIndex === 9 ? ['rabbit','ghost','bomb','fire'][Math.floor(Math.random()*4)] : stageEnemyMapping[stageIndex] }));
+      items = stage.items.map(item => ({ ...item, width: 20, height: 20, collected: false }));
       goal.y = stage.goalY;
-      
-      // 背景色を設定
       canvas.style.background = `linear-gradient(to bottom, ${stage.bgColor}, #000)`;
+      AudioSystem.playBGM(stageIndex === 10);
     }
 
-    // 初期化
-    function init() {
-      setupEventListeners();
-      updateUI();
-    }
+    function init() { setupEventListeners(); updateUI(); }
 
-    // イベントリスナー設定
     function setupEventListeners() {
-      // キーボード操作
       document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') keys.left = true;
         if (e.key === 'ArrowRight') keys.right = true;
-        if (e.key === ' ' || e.key === 'ArrowUp') {
-          keys.space = true;
-          e.preventDefault();
-        }
+        if (e.key === ' ' || e.key === 'ArrowUp') { keys.space = true; e.preventDefault(); }
       });
-
       document.addEventListener('keyup', (e) => {
         if (e.key === 'ArrowLeft') keys.left = false;
         if (e.key === 'ArrowRight') keys.right = false;
         if (e.key === ' ' || e.key === 'ArrowUp') keys.space = false;
       });
 
-      // モバイルコントロール
+      // モバイルコントロール（iOS対応）
       const leftBtn = document.getElementById('leftBtn');
       const rightBtn = document.getElementById('rightBtn');
       const jumpBtn = document.getElementById('jumpBtn');
 
-      if (leftBtn) {
-        leftBtn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          keys.left = true;
-        });
-        leftBtn.addEventListener('touchend', () => keys.left = false);
-        leftBtn.addEventListener('mousedown', () => keys.left = true);
-        leftBtn.addEventListener('mouseup', () => keys.left = false);
-      }
+      [leftBtn, rightBtn, jumpBtn].forEach(btn => {
+        if (!btn) return;
+        const key = btn.id === 'leftBtn' ? 'left' : btn.id === 'rightBtn' ? 'right' : 'space';
+        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }, { passive: false });
+        btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }, { passive: false });
+        btn.addEventListener('touchcancel', () => keys[key] = false);
+        btn.addEventListener('mousedown', () => keys[key] = true);
+        btn.addEventListener('mouseup', () => keys[key] = false);
+        btn.addEventListener('mouseleave', () => keys[key] = false);
+      });
 
-      if (rightBtn) {
-        rightBtn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          keys.right = true;
-        });
-        rightBtn.addEventListener('touchend', () => keys.right = false);
-        rightBtn.addEventListener('mousedown', () => keys.right = true);
-        rightBtn.addEventListener('mouseup', () => keys.right = false);
-      }
+      // サウンドコントロール
+      document.getElementById('bgmToggle').addEventListener('click', function() {
+        const enabled = AudioSystem.toggleBGM();
+        this.classList.toggle('muted', !enabled);
+        this.textContent = enabled ? '🎵' : '🔇';
+      });
+      document.getElementById('seToggle').addEventListener('click', function() {
+        const enabled = AudioSystem.toggleSE();
+        this.classList.toggle('muted', !enabled);
+        this.textContent = enabled ? '🔊' : '🔈';
+      });
 
-      if (jumpBtn) {
-        jumpBtn.addEventListener('touchstart', (e) => {
-          e.preventDefault();
-          keys.space = true;
-        });
-        jumpBtn.addEventListener('touchend', () => keys.space = false);
-        jumpBtn.addEventListener('mousedown', () => keys.space = true);
-        jumpBtn.addEventListener('mouseup', () => keys.space = false);
-      }
-
-      // メッセージボタン
       messageButton.addEventListener('click', handleMessageButton);
     }
 
-    // メッセージボタン処理
     function handleMessageButton() {
-      if (gameState === 'menu') {
-        startGame();
-      } else if (gameState === 'stageClear') {
-        nextStage();
-      } else if (gameState === 'gameOver' || gameState === 'gameComplete') {
-        resetGame();
-      }
+      AudioSystem.init();
+      if (gameState === 'menu') startGame();
+      else if (gameState === 'stageClear') nextStage();
+      else if (gameState === 'gameOver' || gameState === 'gameComplete') resetGame();
     }
 
-    // ゲーム開始
     function startGame() {
+      // ★ここを追加：前のループが残っていたら強制停止する
+      if (animationId) cancelAnimationFrame(animationId);
+
       gameState = 'playing';
       currentStage = 1;
       playerLife = 3;
@@ -759,424 +680,182 @@
       hideMessage();
       updateUI();
       gameLoop();
+    }function nextStage() { currentStage++; if (currentStage > 10) { gameComplete(); } else { gameState = 'playing'; resetPlayer(); loadStage(currentStage); hideMessage(); updateUI(); } }
+    function resetGame() { gameState = 'menu'; currentStage = 1; playerLife = 3; score = 0; resetPlayer(); AudioSystem.stopBGM(); showMessage('CYBER CITY ADVENTURE', 'サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！', 'START GAME'); updateUI(); }
+    function resetPlayer() { player.x = 50; player.y = 200; player.velocityX = 0; player.velocityY = 0; player.onGround = false; player.invulnerable = false; player.invulnerableTime = 0; powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } }; }
+    function updateUI() { currentStageSpan.textContent = currentStage; currentLifeSpan.textContent = playerLife; currentScoreSpan.textContent = score; }
+    function showMessage(title, text, button) { messageTitle.textContent = title; messageText.innerHTML = text; messageButton.textContent = button; messageScreen.style.display = 'flex'; }
+    function hideMessage() { messageScreen.style.display = 'none'; }
+    function checkCollision(r1, r2) { return r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y; }
+
+    // ===== 床の更新処理（新規追加） =====
+    function updatePlatforms() {
+      platforms.forEach(p => {
+        // 動く床
+        if (p.type === 'moving') {
+          p.x += p.vx;
+          if (p.x < p.minX || p.x > p.maxX) {
+            p.vx *= -1;
+          }
+        }
+        // 点滅床 (300フレーム = 約5秒)
+        if (p.type === 'blinking') {
+          p.timer++;
+          // 0-299: 表示, 300-599: 非表示
+          if (p.timer >= 600) p.timer = 0;
+          p.visible = p.timer < 300;
+        }
+      });
     }
 
-    // 次のステージ
-    function nextStage() {
-      currentStage++;
-      if (currentStage > 10) {
-        gameComplete();
-      } else {
-        gameState = 'playing';
-        resetPlayer();
-        loadStage(currentStage);
-        hideMessage();
-        updateUI();
-      }
-    }
-
-    // ゲームリセット
-    function resetGame() {
-      gameState = 'menu';
-      currentStage = 1;
-      playerLife = 3;
-      score = 0;
-      resetPlayer();
-      showMessage('CYBER CITY ADVENTURE', 'サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！', 'START GAME');
-      updateUI();
-    }
-
-    // プレイヤーリセット
-    function resetPlayer() {
-      player.x = 50;
-      player.y = 200;
-      player.velocityX = 0;
-      player.velocityY = 0;
-      player.onGround = false;
-      player.invulnerable = false;
-      player.invulnerableTime = 0;
-      
-      // パワーアップリセット
-      powerUps.speedBoost = { active: false, timer: 0 };
-      powerUps.highJump = { active: false, timer: 0 };
-      powerUps.shield = { active: false, timer: 0 };
-    }
-
-    // UI更新
-    function updateUI() {
-      currentStageSpan.textContent = currentStage;
-      currentLifeSpan.textContent = playerLife;
-      currentScoreSpan.textContent = score;
-    }
-
-    // メッセージ表示
-    function showMessage(title, text, button) {
-      messageTitle.textContent = title;
-      messageText.innerHTML = text;
-      messageButton.textContent = button;
-      messageScreen.style.display = 'flex';
-    }
-
-    // メッセージ非表示
-    function hideMessage() {
-      messageScreen.style.display = 'none';
-    }
-
-    // 衝突判定
-    function checkCollision(r1, r2) {
-      return r1.x < r2.x + r2.width &&
-             r1.x + r1.width > r2.x &&
-             r1.y < r2.y + r2.height &&
-             r1.y + r1.height > r2.y;
-    }
-
-    // プレイヤー更新
     function updatePlayer() {
-      // 移動速度の適用
-      let currentSpeed = player.speed;
-      if (powerUps.speedBoost.active) {
-        currentSpeed *= 1.5;
-      }
-
+      let currentSpeed = powerUps.speedBoost.active ? player.speed * 1.5 : player.speed;
       if (keys.left) player.velocityX = -currentSpeed;
       else if (keys.right) player.velocityX = currentSpeed;
       else player.velocityX *= 0.8;
 
-      // ジャンプ
-      let currentJumpPower = player.jumpPower;
-      if (powerUps.highJump.active) {
-        currentJumpPower *= 1.3;
-      }
+      let currentJumpPower = powerUps.highJump.active ? player.jumpPower * 1.3 : player.jumpPower;
+      if (keys.space && player.onGround) { player.velocityY = -currentJumpPower; player.onGround = false; AudioSystem.playSE('jump'); }
 
-      if (keys.space && player.onGround) {
-        player.velocityY = -currentJumpPower;
-        player.onGround = false;
-      }
-
-      // 重力
       player.velocityY += gravity;
-      if (player.velocityY > maxFallSpeed) {
-        player.velocityY = maxFallSpeed;
-      }
-
-      // 位置更新
+      if (player.velocityY > maxFallSpeed) player.velocityY = maxFallSpeed;
       player.x += player.velocityX;
       player.y += player.velocityY;
-
-      // 画面境界
       if (player.x < 0) player.x = 0;
-      if (player.x + player.width > canvas.width) {
-        player.x = canvas.width - player.width;
-      }
-
-      // 落下判定
-      if (player.y > canvas.height) {
-        loseLife();
-      }
-
-      // 無敵時間
-      if (player.invulnerable) {
-        player.invulnerableTime--;
-        if (player.invulnerableTime <= 0) {
-          player.invulnerable = false;
-        }
-      }
-
-      // パワーアップタイマー更新
-      Object.keys(powerUps).forEach(key => {
-        if (powerUps[key].active) {
-          powerUps[key].timer--;
-          if (powerUps[key].timer <= 0) {
-            powerUps[key].active = false;
-          }
-        }
-      });
-
-      // プラットフォーム衝突
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      if (player.y > canvas.height) loseLife();
+      if (player.invulnerable) { player.invulnerableTime--; if (player.invulnerableTime <= 0) player.invulnerable = false; }
+      Object.keys(powerUps).forEach(key => { if (powerUps[key].active) { powerUps[key].timer--; if (powerUps[key].timer <= 0) powerUps[key].active = false; } });
+      
+      // 床との判定
       player.onGround = false;
       platforms.forEach(platform => {
-        if (checkCollision(player, platform)) {
-          if (player.velocityY > 0 && player.y < platform.y) {
-            player.y = platform.y - player.height;
-            player.velocityY = 0;
-            player.onGround = true;
+        // 消えている床には乗れない
+        if (platform.type === 'blinking' && !platform.visible) return;
+
+        if (checkCollision(player, platform) && player.velocityY > 0 && player.y < platform.y) { 
+          player.y = platform.y - player.height; 
+          player.velocityY = 0; 
+          player.onGround = true; 
+
+          // 動く床に乗っている場合、一緒に動く
+          if (platform.type === 'moving') {
+            player.x += platform.vx;
           }
-        }
+        } 
       });
     }
 
-    // 敵更新
-    function updateEnemies() {
-      enemies.forEach(enemy => {
-        enemy.x += enemy.speed * enemy.direction;
-        
-        if (Math.abs(enemy.x - enemy.startX) > enemy.range) {
-          enemy.direction *= -1;
-        }
+    function updateEnemies() { enemies.forEach(enemy => { enemy.x += enemy.speed * enemy.direction; if (Math.abs(enemy.x - enemy.startX) > enemy.range) enemy.direction *= -1; if (!player.invulnerable && !powerUps.shield.active && checkCollision(player, enemy)) loseLife(); }); }
 
-        // プレイヤーとの衝突
-        if (!player.invulnerable && !powerUps.shield.active && checkCollision(player, enemy)) {
-          loseLife();
-        }
-      });
-    }
+    function updateItems() { items = items.filter(item => { if (!item.collected && checkCollision(player, item)) { collectItem(item); return false; } return !item.collected; }); }
 
-    // アイテム更新
-    function updateItems() {
-      items = items.filter(item => {
-        if (!item.collected && checkCollision(player, item)) {
-          collectItem(item);
-          return false;
-        }
-        return !item.collected;
-      });
-    }
-
-    // アイテム収集
     function collectItem(item) {
       switch(item.type) {
-        case 'coin':
-          score += 100;
-          createParticles(item.x + 10, item.y + 10, '#ffd700');
-          break;
-        case 'heart':
-          if (playerLife < 5) {
-            playerLife++;
-          }
-          score += 50;
-          createParticles(item.x + 10, item.y + 10, '#ff69b4');
-          break;
-        case 'speedBoost':
-          powerUps.speedBoost = { active: true, timer: 300 };
-          createParticles(item.x + 10, item.y + 10, '#00ffff');
-          break;
-        case 'highJump':
-          powerUps.highJump = { active: true, timer: 300 };
-          createParticles(item.x + 10, item.y + 10, '#ff00ff');
-          break;
-        case 'shield':
-          powerUps.shield = { active: true, timer: 300 };
-          createParticles(item.x + 10, item.y + 10, '#ffff00');
-          break;
+        case 'coin': score += 100; createParticles(item.x + 10, item.y + 10, '#ffd700'); AudioSystem.playSE('coin'); break;
+        case 'heart': if (playerLife < 5) playerLife++; score += 50; createParticles(item.x + 10, item.y + 10, '#ff69b4'); AudioSystem.playSE('heart'); break;
+        case 'speedBoost': powerUps.speedBoost = { active: true, timer: 300 }; createParticles(item.x + 10, item.y + 10, '#00ffff'); AudioSystem.playSE('powerup'); break;
+        case 'highJump': powerUps.highJump = { active: true, timer: 300 }; createParticles(item.x + 10, item.y + 10, '#ff00ff'); AudioSystem.playSE('powerup'); break;
+        case 'shield': powerUps.shield = { active: true, timer: 300 }; createParticles(item.x + 10, item.y + 10, '#ffff00'); AudioSystem.playSE('powerup'); break;
       }
       updateUI();
     }
 
-    // ライフ消失
     function loseLife() {
       if (player.invulnerable || powerUps.shield.active) return;
-
-      playerLife--;
-      updateUI();
-      
-      if (playerLife <= 0) {
-        gameOver();
-      } else {
-        player.invulnerable = true;
-        player.invulnerableTime = 120;
-        resetPlayer();
-        createParticles(player.x + player.width/2, player.y + player.height/2, '#ff0000');
-      }
+      playerLife--; updateUI(); AudioSystem.playSE('hit');
+      if (playerLife <= 0) gameOver();
+      else { player.invulnerable = true; player.invulnerableTime = 120; resetPlayer(); loadStage(currentStage); createParticles(player.x + player.width/2, player.y + player.height/2, '#ff0000'); }
     }
 
-    // ゴール判定
-    function checkGoal() {
-      if (checkCollision(player, goal)) {
-        stageClear();
-      }
-    }
+    function checkGoal() { if (checkCollision(player, goal)) stageClear(); }
+    function stageClear() { gameState = 'stageClear'; score += 500; updateUI(); AudioSystem.stopBGM(); AudioSystem.playSE('clear'); showMessage(`STAGE ${currentStage} CLEAR!`, `スコア: ${score}<br>残りライフ: ${playerLife}`, 'NEXT STAGE'); }
+    function gameOver() { gameState = 'gameOver'; AudioSystem.stopBGM(); AudioSystem.playSE('gameover'); showMessage('GAME OVER', `最終スコア: ${score}<br>到達ステージ: ${currentStage}`, 'RETRY'); }
+    function gameComplete() { gameState = 'gameComplete'; score += 1000; updateUI(); AudioSystem.stopBGM(); AudioSystem.playSE('victory'); showMessage('CONGRATULATIONS!', `全ステージクリア！<br>最終スコア: ${score}`, 'PLAY AGAIN'); }
 
-    // ステージクリア
-    function stageClear() {
-      gameState = 'stageClear';
-      score += 500;
-      updateUI();
-      showMessage(
-        `STAGE ${currentStage} CLEAR!`,
-        `スコア: ${score}<br>残りライフ: ${playerLife}`,
-        'NEXT STAGE'
-      );
-    }
+    function createParticles(x, y, color) { for (let i = 0; i < 8; i++) particles.push({ x, y, vx: (Math.random() - 0.5) * 5, vy: (Math.random() - 0.5) * 5, life: 30, color }); }
+    function updateParticles() { particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life--; return p.life > 0; }); }
 
-    // ゲームオーバー
-    function gameOver() {
-      gameState = 'gameOver';
-      showMessage(
-        'GAME OVER',
-        `最終スコア: ${score}<br>到達ステージ: ${currentStage}`,
-        'RETRY'
-      );
-    }
-
-    // ゲームクリア
-    function gameComplete() {
-      gameState = 'gameComplete';
-      score += 1000;
-      updateUI();
-      showMessage(
-        'CONGRATULATIONS!',
-        `全ステージクリア！<br>最終スコア: ${score}`,
-        'PLAY AGAIN'
-      );
-    }
-
-    // パーティクル作成
-    function createParticles(x, y, color) {
-      for (let i = 0; i < 8; i++) {
-        particles.push({
-          x: x,
-          y: y,
-          vx: (Math.random() - 0.5) * 5,
-          vy: (Math.random() - 0.5) * 5,
-          life: 30,
-          color: color
-        });
-      }
-    }
-
-    // パーティクル更新
-    function updateParticles() {
-      particles = particles.filter(p => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.2;
-        p.life--;
-        return p.life > 0;
-      });
-    }
-
-    // 描画
     function draw() {
-      // 背景クリア
       ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // プラットフォーム描画
-      ctx.fillStyle = '#00ff88';
-      platforms.forEach(platform => {
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+      // --- 床描画（ロジック変更） ---
+      platforms.forEach(p => {
+        // 消えている床は描画しない（デバッグ用に極薄く枠だけ残すことも可能だが、今回は完全消去）
+        if (p.type === 'blinking' && !p.visible) return;
+
+        // 色の決定
+        if (p.type === 'moving') {
+           ctx.fillStyle = '#ff00ff'; // 動く床: マゼンタ
+           ctx.strokeStyle = '#ff88ff';
+        } else if (p.type === 'blinking') {
+           // 消える直前(残り1秒=60フレーム未満)はチカチカさせる
+           const timeLeft = 300 - p.timer;
+           if (timeLeft < 60 && Math.floor(Date.now() / 50) % 2 === 0) {
+             ctx.fillStyle = 'rgba(0, 255, 136, 0.3)';
+           } else {
+             ctx.fillStyle = '#00ff88'; 
+           }
+           ctx.strokeStyle = '#00ffaa';
+        } else {
+           ctx.fillStyle = '#00ff88'; // 通常床: 緑
+           ctx.strokeStyle = '#00ffaa';
+        }
         
-        // ネオンエフェクト
-        ctx.strokeStyle = '#00ffaa';
+        ctx.fillRect(p.x, p.y, p.width, p.height);
         ctx.lineWidth = 2;
-        ctx.strokeRect(platform.x, platform.y, platform.width, platform.height);
+        ctx.strokeRect(p.x, p.y, p.width, p.height);
       });
 
-      // アイテム描画
       items.forEach(item => {
-        if (!item.collected) {
-          switch(item.type) {
-            case 'coin':
-              ctx.fillStyle = '#ffd700';
-              ctx.beginPath();
-              ctx.arc(item.x + 10, item.y + 10, 8, 0, Math.PI * 2);
-              ctx.fill();
-              break;
-            case 'heart':
-              ctx.fillStyle = '#ff69b4';
-              ctx.fillRect(item.x, item.y, 20, 20);
-              break;
-            case 'speedBoost':
-              ctx.fillStyle = '#00ffff';
-              ctx.fillRect(item.x + 5, item.y, 10, 20);
-              ctx.fillRect(item.x, item.y + 7, 20, 6);
-              break;
-            case 'highJump':
-              ctx.fillStyle = '#ff00ff';
-              ctx.beginPath();
-              ctx.moveTo(item.x + 10, item.y);
-              ctx.lineTo(item.x + 20, item.y + 20);
-              ctx.lineTo(item.x, item.y + 20);
-              ctx.closePath();
-              ctx.fill();
-              break;
-            case 'shield':
-              ctx.fillStyle = '#ffff00';
-              ctx.beginPath();
-              ctx.arc(item.x + 10, item.y + 10, 10, 0, Math.PI * 2);
-              ctx.fill();
-              ctx.strokeStyle = '#ffff00';
-              ctx.lineWidth = 2;
-              ctx.stroke();
-              break;
-          }
+        if (item.collected) return;
+        switch(item.type) {
+          case 'coin': ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.arc(item.x + 10, item.y + 10, 8, 0, Math.PI * 2); ctx.fill(); break;
+          case 'heart': ctx.fillStyle = '#ff69b4'; ctx.fillRect(item.x, item.y, 20, 20); break;
+          case 'speedBoost': ctx.fillStyle = '#00ffff'; ctx.fillRect(item.x + 5, item.y, 10, 20); ctx.fillRect(item.x, item.y + 7, 20, 6); break;
+          case 'highJump': ctx.fillStyle = '#ff00ff'; ctx.beginPath(); ctx.moveTo(item.x + 10, item.y); ctx.lineTo(item.x + 20, item.y + 20); ctx.lineTo(item.x, item.y + 20); ctx.closePath(); ctx.fill(); break;
+          case 'shield': ctx.fillStyle = '#ffff00'; ctx.beginPath(); ctx.arc(item.x + 10, item.y + 10, 10, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#ffff00'; ctx.lineWidth = 2; ctx.stroke(); break;
         }
       });
 
-      // 敵描画
-      ctx.fillStyle = '#ff4444';
       enemies.forEach(enemy => {
-        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-        
-        // 敵の目
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(enemy.x + 5, enemy.y + 8, 5, 5);
-        ctx.fillRect(enemy.x + 20, enemy.y + 8, 5, 5);
+        const img = images.enemies[enemy.enemyType || stageEnemyMapping[currentStage]];
+        if (img && img.complete && img.naturalWidth > 0) ctx.drawImage(img, enemy.x, enemy.y, enemy.width, enemy.height);
+        else { ctx.fillStyle = enemy.isBoss ? '#800080' : '#ff4444'; ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height); ctx.fillStyle = '#fff'; ctx.fillRect(enemy.x + enemy.width * 0.15, enemy.y + enemy.height * 0.2, enemy.width * 0.2, enemy.width * 0.15); ctx.fillRect(enemy.x + enemy.width * 0.65, enemy.y + enemy.height * 0.2, enemy.width * 0.2, enemy.width * 0.15); }
       });
 
-      // ゴール描画
-      ctx.fillStyle = '#ffff00';
-      ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(goal.x, goal.y, goal.width, goal.height);
+      ctx.fillStyle = '#ffff00'; ctx.fillRect(goal.x, goal.y, goal.width, goal.height); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.strokeRect(goal.x, goal.y, goal.width, goal.height); ctx.fillStyle = '#fff'; ctx.font = '20px Arial'; ctx.fillText('★', goal.x + 5, goal.y + 28);
 
-      // プレイヤー描画
       if (!player.invulnerable || Math.floor(player.invulnerableTime / 5) % 2 === 0) {
-        ctx.fillStyle = player.color;
-        ctx.fillRect(player.x, player.y, player.width, player.height);
-        
-        // シールドエフェクト
-        if (powerUps.shield.active) {
-          ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.arc(player.x + player.width/2, player.y + player.height/2, 25, 0, Math.PI * 2);
-          ctx.stroke();
-        }
+        if (images.player.complete && images.player.naturalWidth > 0) ctx.drawImage(images.player, player.x, player.y, player.width, player.height);
+        else { ctx.fillStyle = player.color; ctx.fillRect(player.x, player.y, player.width, player.height); }
+        if (powerUps.shield.active) { ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(player.x + player.width/2, player.y + player.height/2, 25, 0, Math.PI * 2); ctx.stroke(); }
       }
 
-      // パーティクル描画
-      particles.forEach(p => {
-        ctx.globalAlpha = p.life / 30;
-        ctx.fillStyle = p.color;
-        ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
-      });
+      particles.forEach(p => { ctx.globalAlpha = p.life / 30; ctx.fillStyle = p.color; ctx.fillRect(p.x - 2, p.y - 2, 4, 4); });
       ctx.globalAlpha = 1;
 
-      // パワーアップ状態表示
-      let hudY = 30;
-      ctx.font = '12px Arial';
-      if (powerUps.speedBoost.active) {
-        ctx.fillStyle = '#00ffff';
-        ctx.fillText(`SPEED: ${Math.ceil(powerUps.speedBoost.timer / 60)}s`, 10, hudY);
-        hudY += 20;
-      }
-      if (powerUps.highJump.active) {
-        ctx.fillStyle = '#ff00ff';
-        ctx.fillText(`JUMP: ${Math.ceil(powerUps.highJump.timer / 60)}s`, 10, hudY);
-        hudY += 20;
-      }
-      if (powerUps.shield.active) {
-        ctx.fillStyle = '#ffff00';
-        ctx.fillText(`SHIELD: ${Math.ceil(powerUps.shield.timer / 60)}s`, 10, hudY);
-      }
+      let hudY = 70; ctx.font = '12px Orbitron';
+      if (powerUps.speedBoost.active) { ctx.fillStyle = '#00ffff'; ctx.fillText(`SPEED: ${Math.ceil(powerUps.speedBoost.timer / 60)}s`, 10, hudY); hudY += 20; }
+      if (powerUps.highJump.active) { ctx.fillStyle = '#ff00ff'; ctx.fillText(`JUMP: ${Math.ceil(powerUps.highJump.timer / 60)}s`, 10, hudY); hudY += 20; }
+      if (powerUps.shield.active) { ctx.fillStyle = '#ffff00'; ctx.fillText(`SHIELD: ${Math.ceil(powerUps.shield.timer / 60)}s`, 10, hudY); }
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)'; ctx.font = '10px Orbitron'; ctx.fillText(stageData[currentStage - 1].name, canvas.width - 150, 70);
     }
 
-    // ゲームループ
-    function gameLoop() {
-      if (gameState === 'playing') {
-        updatePlayer();
-        updateEnemies();
-        updateItems();
-        updateParticles();
-        checkGoal();
-        draw();
-      }
-      animationId = requestAnimationFrame(gameLoop);
+    function gameLoop() { 
+      if (gameState === 'playing') { 
+        updatePlatforms(); // 床の動きを更新
+        updatePlayer(); 
+        updateEnemies(); 
+        updateItems(); 
+        updateParticles(); 
+        checkGoal(); 
+        draw(); 
+      } 
+      animationId = requestAnimationFrame(gameLoop); 
     }
 
-    // 初期化実行
     init();
   </script>
 </body>
