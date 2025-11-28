@@ -11,6 +11,10 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      /* iOSでの長押し選択を防止 */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     :root {
@@ -32,10 +36,11 @@
       overflow: hidden;
       font-family: 'Orbitron', monospace;
       color: #eee;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
       -webkit-tap-highlight-color: transparent;
+      /* iOSでのオーバースクロール防止 */
+      position: fixed;
+      width: 100%;
+      height: 100%;
     }
 
     .cyber-bg {
@@ -155,7 +160,8 @@
       font-size: 28px;
       font-weight: bold;
       cursor: pointer;
-      touch-action: manipulation;
+      /* 重要: ブラウザの標準ジェスチャーを無効化 */
+      touch-action: none; 
       box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.1);
       display: flex;
       align-items: center;
@@ -285,9 +291,10 @@
         pointer-events: none;
       }
 
+      /* ボタン位置の調整: iOSのホームバー回避のため bottom を少し上げる */
       #leftBtn, #rightBtn {
         position: absolute;
-        bottom: 25px;
+        bottom: 40px; /* 25px -> 40px */
         width: 75px;
         height: 75px;
         pointer-events: auto;
@@ -298,7 +305,7 @@
 
       #jumpBtn {
         position: absolute;
-        bottom: 25px;
+        bottom: 40px; /* 25px -> 40px */
         right: 20px;
         width: 100px;
         height: 100px;
@@ -313,7 +320,7 @@
       .info-value { font-size: 10px; }
 
       #leftBtn, #rightBtn {
-        bottom: 15px;
+        bottom: 25px; /* 横画面なら少し下げてもOK */
         width: 60px;
         height: 60px;
         font-size: 22px;
@@ -321,26 +328,11 @@
       #leftBtn { left: 15px; }
       #rightBtn { left: 85px; }
       #jumpBtn {
-        bottom: 15px;
+        bottom: 25px;
         right: 15px;
         width: 80px;
         height: 80px;
         font-size: 26px;
-      }
-    }
-
-    @media (max-width: 414px) {
-      #leftBtn, #rightBtn {
-        width: 65px;
-        height: 65px;
-        font-size: 24px;
-      }
-      #leftBtn { left: 15px; }
-      #rightBtn { left: 90px; }
-      #jumpBtn {
-        width: 85px;
-        height: 85px;
-        font-size: 28px;
       }
     }
   </style>
@@ -523,7 +515,7 @@
       }
     };
 
-    // ===== 画像読み込み（変更なし） =====
+    // ===== 画像読み込み（変更なし：ファイル名大文字小文字に注意！） =====
     const images = {
       player: new Image(),
       enemies: { rabbit: new Image(), ghost: new Image(), bomb: new Image(), fire: new Image(), boss: new Image() }
@@ -562,36 +554,12 @@
     let goal = { x: 750, y: 100, width: 30, height: 40 };
     let powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } };
 
-    // ===== ステージデータ（更新版：ステージ4難易度調整済み） =====
+    // ===== ステージデータ =====
     const stageData = [
       { name: "CYBER START", bgColor: "#001122", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 450, width: 100, height: 20 },{ x: 300, y: 350, width: 150, height: 20 },{ x: 500, y: 400, width: 100, height: 20 },{ x: 650, y: 300, width: 100, height: 20 }], enemies: [{ x: 350, y: 310, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 150, y: 410, type: 'coin' },{ x: 375, y: 310, type: 'heart' },{ x: 550, y: 360, type: 'coin' }], goalY: 260 },
       { name: "NEON CITY", bgColor: "#0a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 80, height: 20 },{ x: 200, y: 400, width: 100, height: 20 },{ x: 350, y: 330, width: 80, height: 20 },{ x: 480, y: 280, width: 120, height: 20 },{ x: 650, y: 200, width: 100, height: 20 }], enemies: [{ x: 250, y: 360, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 500, y: 240, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 120, y: 430, type: 'coin' },{ x: 390, y: 290, type: 'speedBoost' },{ x: 530, y: 240, type: 'coin' }], goalY: 160 },
       { name: "DATA STREAM", bgColor: "#1a0a1a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 60, height: 20 },{ x: 150, y: 430, width: 80, height: 20 },{ x: 270, y: 380, width: 60, height: 20 },{ x: 370, y: 320, width: 100, height: 20 },{ x: 520, y: 270, width: 80, height: 20 },{ x: 650, y: 220, width: 100, height: 20 }], enemies: [{ x: 200, y: 390, width: 40, height: 40, speed: 2, range: 60 },{ x: 420, y: 280, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 560, y: 230, width: 40, height: 40, speed: 1, range: 60 }], items: [{ x: 80, y: 440, type: 'coin' },{ x: 300, y: 340, type: 'highJump' },{ x: 420, y: 280, type: 'heart' },{ x: 690, y: 180, type: 'coin' }], goalY: 180 },
-      
-      // ★ここが修正したステージ4です
-      { 
-        name: "MATRIX ZONE", 
-        bgColor: "#0a1a1a", 
-        platforms: [
-          { x: 0, y: 550, width: 800, height: 50 }, // 地面
-          { x: 50, y: 480, width: 100, height: 20 }, // 1段目(安全)
-          { x: 200, y: 430, width: 80, height: 20, type: 'blinking', timer: 0 }, // 2段目(点滅・敵なし)
-          { x: 350, y: 380, width: 150, height: 20 }, // 3段目(広い・敵あり)
-          { x: 550, y: 330, width: 80, height: 20, type: 'blinking', timer: 150 }, // 4段目(点滅・敵なし)
-          { x: 680, y: 250, width: 100, height: 20 } // ゴール前
-        ], 
-        enemies: [
-          { x: 380, y: 340, width: 40, height: 40, speed: 1, range: 100 }, // 3段目の敵
-          { x: 600, y: 510, width: 40, height: 40, speed: 2, range: 150 }  // 落ちた時用の敵
-        ], 
-        items: [
-          { x: 70, y: 440, type: 'coin' },
-          { x: 400, y: 340, type: 'shield' }, 
-          { x: 700, y: 210, type: 'heart' }
-        ], 
-        goalY: 210 
-      },
-
+      { name: "MATRIX ZONE", bgColor: "#0a1a1a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 100, height: 20 },{ x: 200, y: 430, width: 80, height: 20, type: 'blinking', timer: 0 },{ x: 350, y: 380, width: 150, height: 20 },{ x: 550, y: 330, width: 80, height: 20, type: 'blinking', timer: 150 },{ x: 680, y: 250, width: 100, height: 20 }], enemies: [{ x: 380, y: 340, width: 40, height: 40, speed: 1, range: 100 },{ x: 600, y: 510, width: 40, height: 40, speed: 2, range: 150 }], items: [{ x: 70, y: 440, type: 'coin' },{ x: 400, y: 340, type: 'shield' },{ x: 700, y: 210, type: 'heart' }], goalY: 210 },
       { name: "CYBER CORE", bgColor: "#2a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 490, width: 100, height: 20, type: 'moving', vx: 2, minX: 50, maxX: 200 },{ x: 230, y: 430, width: 60, height: 20 },{ x: 340, y: 370, width: 100, height: 20, type: 'moving', vx: -2, minX: 300, maxX: 450 },{ x: 490, y: 310, width: 60, height: 20 },{ x: 600, y: 250, width: 100, height: 20, type: 'moving', vx: 1.5, minX: 550, maxX: 700 },{ x: 400, y: 480, width: 80, height: 20 }], enemies: [{ x: 130, y: 450, width: 40, height: 40, speed: 1, range: 80 },{ x: 260, y: 390, width: 40, height: 40, speed: 1.5, range: 40 },{ x: 390, y: 330, width: 40, height: 40, speed: 1.2, range: 80 },{ x: 520, y: 270, width: 40, height: 40, speed: 1, range: 40 },{ x: 650, y: 210, width: 40, height: 40, speed: 1.5, range: 80 }], items: [{ x: 130, y: 450, type: 'speedBoost' },{ x: 390, y: 330, type: 'heart' },{ x: 440, y: 440, type: 'coin' },{ x: 650, y: 210, type: 'shield' }], goalY: 210 },
       { name: "DIGITAL VOID", bgColor: "#1a1a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 500, width: 60, height: 20, type: 'blinking', timer: 0 },{ x: 170, y: 460, width: 60, height: 20 },{ x: 280, y: 420, width: 60, height: 20, type: 'moving', vx: 1, minX: 250, maxX: 350 },{ x: 390, y: 380, width: 60, height: 20 },{ x: 500, y: 340, width: 60, height: 20, type: 'blinking', timer: 150 },{ x: 610, y: 300, width: 60, height: 20 },{ x: 720, y: 260, width: 60, height: 20 }], enemies: [{ x: 200, y: 420, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 310, y: 380, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 420, y: 340, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 530, y: 300, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 640, y: 260, width: 40, height: 40, speed: 1.5, range: 50 }], items: [{ x: 90, y: 460, type: 'coin' },{ x: 310, y: 380, type: 'highJump' },{ x: 530, y: 300, type: 'heart' },{ x: 750, y: 220, type: 'coin' }], goalY: 220 },
       { name: "NEON NEXUS", bgColor: "#2a1a0a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 480, width: 50, height: 20 },{ x: 200, y: 420, width: 50, height: 20, type: 'moving', vx: 2, minX: 150, maxX: 250 },{ x: 300, y: 360, width: 50, height: 20 },{ x: 400, y: 300, width: 50, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 240, width: 50, height: 20 },{ x: 600, y: 180, width: 50, height: 20, type: 'moving', vx: -2, minX: 550, maxX: 650 },{ x: 700, y: 120, width: 80, height: 20 }], enemies: [{ x: 125, y: 440, width: 40, height: 40, speed: 1.6, range: 30 },{ x: 225, y: 380, width: 40, height: 40, speed: 1.7, range: 30 },{ x: 325, y: 320, width: 40, height: 40, speed: 1.5, range: 30 },{ x: 425, y: 260, width: 40, height: 40, speed: 3.5, range: 30 },{ x: 525, y: 200, width: 40, height: 40, speed: 1, range: 30 },{ x: 625, y: 140, width: 40, height: 40, speed: 1.5, range: 30 }], items: [{ x: 225, y: 380, type: 'speedBoost' },{ x: 425, y: 260, type: 'shield' },{ x: 625, y: 140, type: 'heart' },{ x: 740, y: 80, type: 'coin' }], goalY: 80 },
@@ -602,7 +570,6 @@
 
     function loadStage(stageIndex) {
       const stage = stageData[stageIndex - 1];
-      // 床データ読み込み（状態リセットのためにコピー）
       platforms = stage.platforms.map(p => ({ 
         ...p, 
         visible: true, 
@@ -615,7 +582,17 @@
       AudioSystem.playBGM(stageIndex === 10);
     }
 
-    function init() { setupEventListeners(); updateUI(); }
+    function init() { 
+      // iOSでの長押しメニュー禁止処理を追加
+      window.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }, { passive: false });
+
+      setupEventListeners(); 
+      updateUI(); 
+    }
 
     function setupEventListeners() {
       document.addEventListener('keydown', (e) => {
@@ -629,7 +606,6 @@
         if (e.key === ' ' || e.key === 'ArrowUp') keys.space = false;
       });
 
-      // モバイルコントロール（iOS対応）
       const leftBtn = document.getElementById('leftBtn');
       const rightBtn = document.getElementById('rightBtn');
       const jumpBtn = document.getElementById('jumpBtn');
@@ -645,7 +621,6 @@
         btn.addEventListener('mouseleave', () => keys[key] = false);
       });
 
-      // サウンドコントロール
       document.getElementById('bgmToggle').addEventListener('click', function() {
         const enabled = AudioSystem.toggleBGM();
         this.classList.toggle('muted', !enabled);
@@ -668,9 +643,7 @@
     }
 
     function startGame() {
-      // ★ここを追加：前のループが残っていたら強制停止する
       if (animationId) cancelAnimationFrame(animationId);
-
       gameState = 'playing';
       currentStage = 1;
       playerLife = 3;
@@ -688,20 +661,16 @@
     function hideMessage() { messageScreen.style.display = 'none'; }
     function checkCollision(r1, r2) { return r1.x < r2.x + r2.width && r1.x + r1.width > r2.x && r1.y < r2.y + r2.height && r1.y + r1.height > r2.y; }
 
-    // ===== 床の更新処理（新規追加） =====
     function updatePlatforms() {
       platforms.forEach(p => {
-        // 動く床
         if (p.type === 'moving') {
           p.x += p.vx;
           if (p.x < p.minX || p.x > p.maxX) {
             p.vx *= -1;
           }
         }
-        // 点滅床 (300フレーム = 約5秒)
         if (p.type === 'blinking') {
           p.timer++;
-          // 0-299: 表示, 300-599: 非表示
           if (p.timer >= 600) p.timer = 0;
           p.visible = p.timer < 300;
         }
@@ -727,18 +696,13 @@
       if (player.invulnerable) { player.invulnerableTime--; if (player.invulnerableTime <= 0) player.invulnerable = false; }
       Object.keys(powerUps).forEach(key => { if (powerUps[key].active) { powerUps[key].timer--; if (powerUps[key].timer <= 0) powerUps[key].active = false; } });
       
-      // 床との判定
       player.onGround = false;
       platforms.forEach(platform => {
-        // 消えている床には乗れない
         if (platform.type === 'blinking' && !platform.visible) return;
-
         if (checkCollision(player, platform) && player.velocityY > 0 && player.y < platform.y) { 
           player.y = platform.y - player.height; 
           player.velocityY = 0; 
           player.onGround = true; 
-
-          // 動く床に乗っている場合、一緒に動く
           if (platform.type === 'moving') {
             player.x += platform.vx;
           }
@@ -780,17 +744,12 @@
       ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // --- 床描画（ロジック変更） ---
       platforms.forEach(p => {
-        // 消えている床は描画しない（デバッグ用に極薄く枠だけ残すことも可能だが、今回は完全消去）
         if (p.type === 'blinking' && !p.visible) return;
-
-        // 色の決定
         if (p.type === 'moving') {
-           ctx.fillStyle = '#ff00ff'; // 動く床: マゼンタ
+           ctx.fillStyle = '#ff00ff';
            ctx.strokeStyle = '#ff88ff';
         } else if (p.type === 'blinking') {
-           // 消える直前(残り1秒=60フレーム未満)はチカチカさせる
            const timeLeft = 300 - p.timer;
            if (timeLeft < 60 && Math.floor(Date.now() / 50) % 2 === 0) {
              ctx.fillStyle = 'rgba(0, 255, 136, 0.3)';
@@ -799,10 +758,9 @@
            }
            ctx.strokeStyle = '#00ffaa';
         } else {
-           ctx.fillStyle = '#00ff88'; // 通常床: 緑
+           ctx.fillStyle = '#00ff88';
            ctx.strokeStyle = '#00ffaa';
         }
-        
         ctx.fillRect(p.x, p.y, p.width, p.height);
         ctx.lineWidth = 2;
         ctx.strokeRect(p.x, p.y, p.width, p.height);
@@ -845,7 +803,7 @@
 
     function gameLoop() { 
       if (gameState === 'playing') { 
-        updatePlatforms(); // 床の動きを更新
+        updatePlatforms(); 
         updatePlayer(); 
         updateEnemies(); 
         updateItems(); 
