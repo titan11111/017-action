@@ -1094,7 +1094,7 @@
       hideMessage();
       updateUI();
       gameLoop();
-    }function nextStage() { currentStage++; if (currentStage > 10) { gameComplete(); } else { gameState = 'playing'; resetPlayer(); loadStage(currentStage); hideMessage(); updateUI(); } }
+    }function nextStage() { currentStage++; if (currentStage > 10) { gameComplete(); } else { gameState = 'playing'; resetPlayer(); loadStage(currentStage); hideMessage(); updateUI(); gameLoop(); } }
     function resetGame() { gameState = 'menu'; currentStage = 1; playerLife = 3; score = 0; resetPlayer(); AudioSystem.stopBGM(); showMessage('CYBER CITY ADVENTURE', 'サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！', 'START GAME'); updateUI(); }
     function resetPlayer() { player.x = 50; player.y = 200; player.velocityX = 0; player.velocityY = 0; player.onGround = false; player.invulnerable = false; player.invulnerableTime = 0; powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } }; }
     function updateUI() { currentStageSpan.textContent = currentStage; currentLifeSpan.textContent = playerLife; currentScoreSpan.textContent = score; }
