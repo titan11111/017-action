@@ -531,10 +531,11 @@
 
       init: function() {
         if (this.initialized) return;
-        this.bgm = new Audio('audio/Neon Circuitry.mp3');
+        // スペース入りファイル名は encodeURI しないと一部環境で 404 になる
+        this.bgm = new Audio(encodeURI('audio/Neon Circuitry.mp3'));
         this.bgm.loop = true;
         this.bgm.volume = this.volume;
-        this.bgmBoss = new Audio('audio/tobu.mp3');
+        this.bgmBoss = new Audio(encodeURI('audio/tobu.mp3'));
         this.bgmBoss.loop = true;
         this.bgmBoss.volume = this.volume;
         this.initialized = true;
@@ -709,17 +710,19 @@
       }
     };
 
-    // ===== 画像読み込み（変更なし：ファイル名大文字小文字に注意！） =====
+    // ===== 画像読み込み（実在ファイル名のみ。旧 image_0.png 等は 404 になる） =====
+    // ?v= は古いキャッシュHTML対策（参照切れ画像の握り潰しを避ける）
+    const ASSET_V = '20260803';
     const images = {
       player: new Image(),
       enemies: { rabbit: new Image(), ghost: new Image(), bomb: new Image(), fire: new Image(), boss: new Image() }
     };
-    images.player.src = 'hero.png';
-    images.enemies.rabbit.src = 'enemy8.png';
-    images.enemies.ghost.src = 'enemy9.png';
-    images.enemies.bomb.src = 'enemy10.png';
-    images.enemies.fire.src = 'enemy7.png';
-    images.enemies.boss.src = 'maou.png';
+    images.player.src = `hero.png?v=${ASSET_V}`;
+    images.enemies.rabbit.src = `enemy8.png?v=${ASSET_V}`;
+    images.enemies.ghost.src = `enemy9.png?v=${ASSET_V}`;
+    images.enemies.bomb.src = `enemy10.png?v=${ASSET_V}`;
+    images.enemies.fire.src = `enemy7.png?v=${ASSET_V}`;
+    images.enemies.boss.src = `maou.png?v=${ASSET_V}`;
     
     const stageEnemyMapping = { 1:'rabbit', 2:'rabbit', 3:'ghost', 4:'ghost', 5:'bomb', 6:'bomb', 7:'fire', 8:'fire', 9:'fire', 10:'boss' };
 
@@ -1083,8 +1086,14 @@
       else if (gameState === 'gameOver' || gameState === 'gameComplete') resetGame();
     }
 
+    // RAF は常に1本だけ。nextStage で gameLoop() を足すと速度が2倍になる
+    function restartGameLoop() {
+      if (animationId != null) cancelAnimationFrame(animationId);
+      animationId = null;
+      gameLoop();
+    }
+
     function startGame() {
-      if (animationId) cancelAnimationFrame(animationId);
       gameState = 'playing';
       currentStage = 1;
       playerLife = 3;
@@ -1093,8 +1102,22 @@
       loadStage(currentStage);
       hideMessage();
       updateUI();
-      gameLoop();
-    }function nextStage() { currentStage++; if (currentStage > 10) { gameComplete(); } else { gameState = 'playing'; resetPlayer(); loadStage(currentStage); hideMessage(); updateUI(); gameLoop(); } }
+      restartGameLoop();
+    }
+
+    function nextStage() {
+      currentStage++;
+      if (currentStage > 10) {
+        gameComplete();
+      } else {
+        gameState = 'playing';
+        resetPlayer();
+        loadStage(currentStage);
+        hideMessage();
+        updateUI();
+        restartGameLoop();
+      }
+    }
     function resetGame() { gameState = 'menu'; currentStage = 1; playerLife = 3; score = 0; resetPlayer(); AudioSystem.stopBGM(); showMessage('CYBER CITY ADVENTURE', 'サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！', 'START GAME'); updateUI(); }
     function resetPlayer() { player.x = 50; player.y = 200; player.velocityX = 0; player.velocityY = 0; player.onGround = false; player.invulnerable = false; player.invulnerableTime = 0; powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } }; }
     function updateUI() { currentStageSpan.textContent = currentStage; currentLifeSpan.textContent = playerLife; currentScoreSpan.textContent = score; }
