@@ -41,6 +41,10 @@
       position: fixed;
       width: 100%;
       height: 100%;
+      /* ノッチ・ホームバーを避ける（iPhone実機対応） */
+      padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
+               env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+      box-sizing: border-box;
     }
 
     .cyber-bg {
@@ -402,6 +406,24 @@
         this.initialized = true;
       },
 
+      /**
+       * iOS Safari のオーディオロック解除。
+       * 必ずユーザー操作（click/touch）のハンドラ内から同期的に呼ぶこと。
+       * ここを通さないと初回のBGM/SEが無音になる。
+       */
+      unlock: function() {
+        if (!this.audioContext) {
+          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioContext.state === 'suspended') this.audioContext.resume();
+        // サイレントバッファを1回鳴らしてWebAudioのロックを外す
+        const buf = this.audioContext.createBuffer(1, 1, 22050);
+        const src = this.audioContext.createBufferSource();
+        src.buffer = buf;
+        src.connect(this.audioContext.destination);
+        src.start(0);
+      },
+
       playBGM: function(isBoss = false) {
         if (!this.bgmEnabled) return;
         this.stopBGM();
@@ -409,7 +431,7 @@
         if (this.currentBGM) {
           this.currentBGM.currentTime = 0;
           this.currentBGM.volume = this.volume;
-          this.currentBGM.play().catch(e => console.log('BGM再生待機中'));
+          this.currentBGM.play().catch(() => { /* 未unlock時はここに落ちる。次のタップで再試行される */ });
         }
       },
 
@@ -636,6 +658,8 @@
     }
 
     function handleMessageButton() {
+      // ユーザー操作の中でオーディオロックを外す（iOS Safari必須。init より先に呼ぶ）
+      AudioSystem.unlock();
       AudioSystem.init();
       if (gameState === 'menu') startGame();
       else if (gameState === 'stageClear') nextStage();
