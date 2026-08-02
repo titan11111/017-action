@@ -2,19 +2,26 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>🌆 サイバーパンク・ネオシティ・アクション</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
     
-    * {
+    *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      /* iOSでの長押し選択を防止 */
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
+      -webkit-user-drag: none;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: none;
+    }
+
+    ::selection {
+      background: transparent;
+      color: inherit;
     }
 
     :root {
@@ -26,24 +33,28 @@
       --cyber-blue: #0f3460;
     }
 
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
     body {
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       margin: 0;
       background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
-      overflow: hidden;
       font-family: 'Orbitron', monospace;
       color: #eee;
-      -webkit-tap-highlight-color: transparent;
-      /* iOSでのオーバースクロール防止 */
       position: fixed;
-      width: 100%;
+      inset: 0;
       height: 100%;
-      /* ノッチ・ホームバーを避ける（iPhone実機対応） */
+      height: -webkit-fill-available;
+      height: 100dvh;
       padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
-               env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+               0 env(safe-area-inset-left, 0px);
       box-sizing: border-box;
     }
 
@@ -152,45 +163,145 @@
       color: #666;
     }
 
-    #mobileControls {
+    #mobileControls,
+    #fcPad {
       display: none;
     }
 
-    .control-btn {
-      background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-dark));
-      border: 3px solid var(--neon-cyan);
-      border-radius: 50%;
-      color: var(--neon-cyan);
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      /* 重要: ブラウザの標準ジェスチャーを無効化 */
-      touch-action: none; 
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.1);
+    .fc-pad {
+      background: linear-gradient(180deg, #3a3a48 0%, #1a1a28 100%);
+      border-top: 3px solid #6a6a78;
+      box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.08);
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+      flex: 0 0 25%;
+      min-height: 0;
+      box-sizing: border-box;
+    }
+
+    .fc-dpad {
+      width: min(42vw, 168px);
+      height: min(42vw, 168px);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr 1.15fr;
+      grid-template-rows: 0.75fr 1.25fr 0.75fr;
+      gap: 4px;
+    }
+
+    .fc-btn {
+      border: none;
+      border-radius: 0;
+      background: #2a2a34;
+      color: #c8c8d0;
+      font-size: 1.35rem;
+      font-family: inherit;
+      box-shadow:
+        inset 0 2px 0 rgba(255, 255, 255, 0.1),
+        0 4px 0 #111118;
+      transition: transform 0.07s ease, background 0.07s ease, box-shadow 0.07s ease;
+      touch-action: none;
+      min-width: 48px;
+      min-height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.1s;
-      text-shadow: 0 0 10px var(--neon-cyan);
+      cursor: pointer;
     }
 
-    .control-btn:active {
-      transform: scale(0.92);
-      box-shadow: 0 0 30px rgba(0, 255, 255, 0.9), inset 0 2px 15px rgba(255, 255, 255, 0.2);
-      background: linear-gradient(135deg, var(--neon-cyan), var(--cyber-blue));
+    .fc-btn:disabled {
+      opacity: 0.22;
+      box-shadow: none;
+      pointer-events: none;
     }
 
-    .jump-btn {
-      background: linear-gradient(135deg, #660066, var(--cyber-dark));
-      border-color: var(--neon-pink);
-      color: var(--neon-pink);
-      box-shadow: 0 0 20px rgba(255, 0, 255, 0.6), inset 0 2px 10px rgba(255, 255, 255, 0.1);
-      text-shadow: 0 0 10px var(--neon-pink);
+    .fc-btn:not(:disabled):active,
+    .fc-btn.is-pressed {
+      transform: translateY(3px) scale(0.95);
+      background: #454556;
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.55);
+      color: #fff;
     }
 
-    .jump-btn:active {
-      box-shadow: 0 0 30px rgba(255, 0, 255, 0.9), inset 0 2px 15px rgba(255, 255, 255, 0.2);
-      background: linear-gradient(135deg, var(--neon-pink), #660066);
+    .fc-up { grid-column: 2; grid-row: 1; }
+    .fc-left { grid-column: 1; grid-row: 2; font-size: 1.5rem; }
+    .fc-center {
+      grid-column: 2;
+      grid-row: 2;
+      background: #22222c;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.6);
+      pointer-events: none;
+    }
+    .fc-right { grid-column: 3; grid-row: 2; font-size: 1.5rem; }
+    .fc-down { grid-column: 2; grid-row: 3; }
+
+    .fc-actions {
+      display: flex;
+      gap: clamp(12px, 4vw, 22px);
+      align-items: center;
+      padding-top: 8px;
+    }
+
+    .fc-round {
+      width: min(22vw, 84px);
+      height: min(22vw, 84px);
+      min-width: 64px;
+      min-height: 64px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      font-family: inherit;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      box-shadow:
+        0 6px 0 rgba(0, 0, 0, 0.45),
+        inset 0 2px 0 rgba(255, 255, 255, 0.28);
+      transition: transform 0.07s ease, box-shadow 0.07s ease;
+      touch-action: none;
+      line-height: 1.05;
+      cursor: pointer;
+    }
+
+    .fc-round .fc-letter {
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    .fc-round small {
+      font-size: 0.5rem;
+      letter-spacing: 0.04em;
+      opacity: 0.9;
+    }
+
+    .fc-a {
+      background: radial-gradient(circle at 35% 30%, #ff8a80, #c62828 70%);
+      transform: translateY(6px);
+    }
+
+    .fc-b {
+      background: radial-gradient(circle at 35% 30%, #ffd54f, #f9a825 70%);
+      color: #3a2800;
+      text-shadow: none;
+    }
+
+    .fc-round:active,
+    .fc-round.is-pressed {
+      transform: translateY(5px) scale(0.93);
+      box-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.45),
+        inset 0 3px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .fc-a:active,
+    .fc-a.is-pressed {
+      transform: translateY(9px) scale(0.93);
     }
 
     #messageScreen {
@@ -241,7 +352,7 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.08s ease;
       box-shadow: 0 5px 15px rgba(0, 255, 255, 0.4);
       font-family: 'Orbitron', monospace;
     }
@@ -251,12 +362,46 @@
       box-shadow: 0 8px 25px rgba(0, 255, 255, 0.6);
     }
 
+    .start-btn:active,
+    .start-btn.is-pressed {
+      transform: scale(0.92);
+      opacity: 0.88;
+    }
+
+    .sound-btn:active,
+    .sound-btn.is-pressed {
+      transform: scale(0.92);
+      opacity: 0.88;
+    }
+
+    #gameStage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
     @media (max-width: 768px) {
       #gameContainer {
         width: 100vw;
-        height: 100vh;
+        height: 100%;
+        height: 100dvh;
         border: none;
         border-radius: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #gameStage {
+        flex: 0 0 75%;
+        width: 100%;
+        height: 75%;
+        min-height: 0;
+      }
+
+      #gameCanvas {
+        width: 100%;
+        height: 100%;
       }
 
       #gameInfo {
@@ -284,37 +429,8 @@
         font-size: 12px;
       }
 
-      #mobileControls {
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 10;
-        pointer-events: none;
-      }
-
-      /* ボタン位置の調整: iOSのホームバー回避のため bottom を少し上げる */
-      #leftBtn, #rightBtn {
-        position: absolute;
-        bottom: 40px; /* 25px -> 40px */
-        width: 75px;
-        height: 75px;
-        pointer-events: auto;
-      }
-
-      #leftBtn { left: 20px; }
-      #rightBtn { left: 110px; }
-
-      #jumpBtn {
-        position: absolute;
-        bottom: 40px; /* 25px -> 40px */
-        right: 20px;
-        width: 100px;
-        height: 100px;
-        pointer-events: auto;
-        font-size: 32px;
+      #fcPad {
+        display: flex;
       }
     }
 
@@ -323,20 +439,16 @@
       .info-item { padding: 2px 6px; font-size: 8px; }
       .info-value { font-size: 10px; }
 
-      #leftBtn, #rightBtn {
-        bottom: 25px; /* 横画面なら少し下げてもOK */
-        width: 60px;
-        height: 60px;
-        font-size: 22px;
+      .fc-dpad {
+        width: min(28vw, 140px);
+        height: min(28vw, 140px);
       }
-      #leftBtn { left: 15px; }
-      #rightBtn { left: 85px; }
-      #jumpBtn {
-        bottom: 25px;
-        right: 15px;
-        width: 80px;
-        height: 80px;
-        font-size: 26px;
+
+      .fc-round {
+        width: min(14vw, 68px);
+        height: min(14vw, 68px);
+        min-width: 56px;
+        min-height: 56px;
       }
     }
   </style>
@@ -347,38 +459,55 @@
   </div>
 
   <div id="gameContainer">
-    <div id="gameInfo">
-      <div class="info-item">
-        <span>STAGE</span>
-        <span id="currentStage" class="info-value">1</span>
+    <div id="gameStage">
+      <div id="messageScreen">
+        <div class="message-content">
+          <h2 id="messageTitle">CYBER CITY ADVENTURE</h2>
+          <p id="messageText">サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！</p>
+          <button type="button" id="messageButton" class="start-btn">START GAME</button>
+        </div>
       </div>
-      <div class="info-item">
-        <span>LIFE</span>
-        <span id="currentLife" class="info-value">3</span>
+
+      <div id="gameInfo">
+        <div class="info-item">
+          <span>STAGE</span>
+          <span id="currentStage" class="info-value">1</span>
+        </div>
+        <div class="info-item">
+          <span>LIFE</span>
+          <span id="currentLife" class="info-value">3</span>
+        </div>
+        <div class="info-item">
+          <span>SCORE</span>
+          <span id="currentScore" class="info-value">0</span>
+        </div>
+        <div id="soundControls">
+          <button type="button" id="bgmToggle" class="sound-btn" title="BGM">🎵</button>
+          <button type="button" id="seToggle" class="sound-btn" title="効果音">🔊</button>
+        </div>
       </div>
-      <div class="info-item">
-        <span>SCORE</span>
-        <span id="currentScore" class="info-value">0</span>
-      </div>
-      <div id="soundControls">
-        <button id="bgmToggle" class="sound-btn" title="BGM">🎵</button>
-        <button id="seToggle" class="sound-btn" title="効果音">🔊</button>
-      </div>
+
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
     </div>
 
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-
-    <div id="mobileControls">
-      <button id="leftBtn" class="control-btn">◀</button>
-      <button id="rightBtn" class="control-btn">▶</button>
-      <button id="jumpBtn" class="control-btn jump-btn">▲</button>
-    </div>
-
-    <div id="messageScreen">
-      <div class="message-content">
-        <h2 id="messageTitle">CYBER CITY ADVENTURE</h2>
-        <p id="messageText">サイバーパンクの世界を冒険しよう！<br>10ステージ全クリアを目指せ！</p>
-        <button id="messageButton" class="start-btn">START GAME</button>
+    <!-- 下25%: ファミコン風コントローラー（モバイル） -->
+    <div class="fc-pad" id="fcPad" aria-label="ファミコンコントローラー">
+      <div class="fc-dpad" aria-label="移動">
+        <button type="button" class="fc-btn fc-up" id="padUp" aria-label="上" tabindex="-1" disabled></button>
+        <button type="button" class="fc-btn fc-left" id="leftBtn" aria-label="左">◀</button>
+        <button type="button" class="fc-btn fc-center" aria-hidden="true" tabindex="-1"></button>
+        <button type="button" class="fc-btn fc-right" id="rightBtn" aria-label="右">▶</button>
+        <button type="button" class="fc-btn fc-down" id="padDown" aria-label="下" tabindex="-1" disabled></button>
+      </div>
+      <div class="fc-actions">
+        <button type="button" class="fc-round fc-b" id="padB" aria-label="B" tabindex="-1" disabled>
+          <span class="fc-letter">B</span>
+          <small>HOLD</small>
+        </button>
+        <button type="button" class="fc-round fc-a" id="jumpBtn" aria-label="ジャンプ">
+          <span class="fc-letter">A</span>
+          <small>JUMP</small>
+        </button>
       </div>
     </div>
   </div>
@@ -411,21 +540,40 @@
        * 必ずユーザー操作（click/touch）のハンドラ内から同期的に呼ぶこと。
        * ここを通さないと初回のBGM/SEが無音になる。
        */
+      unlocked: false,
+
       unlock: function() {
         if (!this.audioContext) {
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (this.audioContext.state === 'suspended') this.audioContext.resume();
         // サイレントバッファを1回鳴らしてWebAudioのロックを外す
-        const buf = this.audioContext.createBuffer(1, 1, 22050);
-        const src = this.audioContext.createBufferSource();
-        src.buffer = buf;
-        src.connect(this.audioContext.destination);
-        src.start(0);
+        try {
+          const buf = this.audioContext.createBuffer(1, 1, 22050);
+          const src = this.audioContext.createBufferSource();
+          src.buffer = buf;
+          src.connect(this.audioContext.destination);
+          src.start(0);
+        } catch (e) { /* unlock失敗は次のジェスチャで再試行 */ }
+
+        // HTMLAudio は同一ジェスチャ内の playBGM() で許可される。
+        // ここで play→pause すると非同期 pause が直後の BGM を止めるので行わない。
+        if (this.bgm || this.bgmBoss) this.unlocked = true;
+      },
+
+      ensureResumed: function() {
+        if (!this.audioContext) {
+          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioContext.state === 'suspended') {
+          this.audioContext.resume().catch(() => {});
+        }
+        return this.audioContext;
       },
 
       playBGM: function(isBoss = false) {
         if (!this.bgmEnabled) return;
+        this.ensureResumed();
         this.stopBGM();
         this.currentBGM = isBoss ? this.bgmBoss : this.bgm;
         if (this.currentBGM) {
@@ -448,16 +596,32 @@
 
       resumeBGM: function() {
         if (this.bgmEnabled && this.currentBGM) {
-          this.currentBGM.play().catch(e => {});
+          this.ensureResumed();
+          this.currentBGM.play().catch(() => {});
         }
+      },
+
+      /** ボタン打感の「カチッ」音 */
+      playClick: function() {
+        if (!this.seEnabled) return;
+        const ctx = this.ensureResumed();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.exponentialRampToValueAtTime(600, now + 0.04);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.05);
       },
 
       playSE: function(type) {
         if (!this.seEnabled) return;
-        if (!this.audioContext) {
-          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        const ctx = this.audioContext;
+        const ctx = this.ensureResumed();
         const now = ctx.currentTime;
 
         switch(type) {
@@ -492,6 +656,9 @@
             break;
           case 'victory':
             [523, 659, 784, 659, 784, 1047].forEach((f, i) => this.playTone(ctx, f, 0.2, 'square', now + i * 0.12));
+            break;
+          case 'click':
+            this.playClick();
             break;
         }
       },
@@ -576,18 +743,200 @@
     let goal = { x: 750, y: 100, width: 30, height: 40 };
     let powerUps = { speedBoost: { active: false, timer: 0 }, highJump: { active: false, timer: 0 }, shield: { active: false, timer: 0 } };
 
+    let bgTick = 0;
+
+    // ステージ背景テーマ（基調は中明度。装飾は低不透明度でプレイを邪魔しない）
+    const stageBgThemes = {
+      1: { top: '#3a6a8a', bottom: '#1a3048', accent: 'rgba(0,220,255,0.12)', motif: 'grid' },
+      2: { top: '#3a3a7a', bottom: '#1e1e48', accent: 'rgba(255,80,200,0.10)', motif: 'city' },
+      3: { top: '#5a3a5a', bottom: '#2a1a30', accent: 'rgba(255,120,200,0.11)', motif: 'stream' },
+      4: { top: '#2a5a4a', bottom: '#143028', accent: 'rgba(80,255,140,0.12)', motif: 'matrix' },
+      5: { top: '#5a3a6a', bottom: '#2a1838', accent: 'rgba(200,100,255,0.12)', motif: 'core' },
+      6: { top: '#3a3a6a', bottom: '#181830', accent: 'rgba(140,160,255,0.10)', motif: 'void' },
+      7: { top: '#6a4a2a', bottom: '#302010', accent: 'rgba(255,180,60,0.12)', motif: 'nexus' },
+      8: { top: '#2a6a6a', bottom: '#143838', accent: 'rgba(80,255,230,0.12)', motif: 'quantum' },
+      9: { top: '#5a3a6a', bottom: '#281438', accent: 'rgba(220,120,255,0.14)', motif: 'storm' },
+      10: { top: '#6a2a4a', bottom: '#301020', accent: 'rgba(255,60,100,0.14)', motif: 'boss' }
+    };
+
+    function drawStageBackground(stageIndex) {
+      const theme = stageBgThemes[stageIndex] || stageBgThemes[1];
+      const W = canvas.width;
+      const H = canvas.height;
+      const t = bgTick;
+
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, theme.top);
+      grad.addColorStop(1, theme.bottom);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.save();
+      switch (theme.motif) {
+        case 'grid': {
+          ctx.strokeStyle = theme.accent;
+          ctx.lineWidth = 1;
+          for (let x = 0; x < W; x += 40) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+          }
+          for (let y = 0; y < H; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+          }
+          break;
+        }
+        case 'city': {
+          ctx.fillStyle = 'rgba(10,10,30,0.28)';
+          const buildings = [40, 90, 70, 120, 55, 140, 80, 110, 60, 130, 75, 100];
+          let bx = 0;
+          buildings.forEach((h, i) => {
+            const bw = 55 + (i % 3) * 10;
+            ctx.fillRect(bx, H - h - 50, bw, h + 50);
+            ctx.fillStyle = 'rgba(255,220,120,0.12)';
+            for (let wy = H - h - 30; wy < H - 60; wy += 18) {
+              for (let wx = bx + 8; wx < bx + bw - 8; wx += 14) {
+                if ((wx + wy + Math.floor(t / 40)) % 3 !== 0) ctx.fillRect(wx, wy, 5, 7);
+              }
+            }
+            ctx.fillStyle = 'rgba(10,10,30,0.28)';
+            bx += bw + 8;
+          });
+          break;
+        }
+        case 'stream': {
+          ctx.strokeStyle = theme.accent;
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 14; i++) {
+            const x = (i * 57 + t * 1.2) % (W + 40) - 20;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x + 30, H);
+            ctx.stroke();
+          }
+          break;
+        }
+        case 'matrix': {
+          ctx.fillStyle = theme.accent;
+          ctx.font = '11px monospace';
+          for (let i = 0; i < 24; i++) {
+            const x = (i * 34) % W;
+            const y = (i * 97 + t * 2) % (H + 40) - 20;
+            ctx.globalAlpha = 0.18;
+            ctx.fillText(String((i * 7 + Math.floor(t / 8)) % 10), x, y);
+          }
+          ctx.globalAlpha = 1;
+          break;
+        }
+        case 'core': {
+          const cx = W * 0.5;
+          const cy = H * 0.38;
+          for (let r = 40; r <= 220; r += 36) {
+            ctx.strokeStyle = theme.accent;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r + Math.sin(t / 30 + r) * 4, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          ctx.fillStyle = 'rgba(255,160,255,0.08)';
+          ctx.beginPath();
+          ctx.arc(cx, cy, 28 + Math.sin(t / 20) * 6, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        }
+        case 'void': {
+          ctx.fillStyle = theme.accent;
+          for (let i = 0; i < 40; i++) {
+            const x = (i * 97) % W;
+            const y = (i * 53) % H;
+            const s = 1 + (i % 3);
+            ctx.globalAlpha = 0.15 + ((Math.sin(t / 25 + i) + 1) * 0.08);
+            ctx.fillRect(x, y, s, s);
+          }
+          ctx.globalAlpha = 1;
+          break;
+        }
+        case 'nexus': {
+          ctx.strokeStyle = theme.accent;
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 8; i++) {
+            const y = 80 + i * 60 + Math.sin(t / 35 + i) * 8;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y + (i % 2 === 0 ? 20 : -20));
+            ctx.stroke();
+          }
+          break;
+        }
+        case 'quantum': {
+          ctx.fillStyle = theme.accent;
+          for (let i = 0; i < 28; i++) {
+            const x = (i * 73 + Math.sin(t / 20 + i) * 20) % W;
+            const y = (i * 41 + Math.cos(t / 25 + i) * 15) % H;
+            ctx.globalAlpha = 0.16;
+            ctx.beginPath();
+            ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+          break;
+        }
+        case 'storm': {
+          ctx.strokeStyle = theme.accent;
+          ctx.lineWidth = 2;
+          if (Math.floor(t / 18) % 7 === 0) {
+            ctx.globalAlpha = 0.35;
+            ctx.fillStyle = 'rgba(255,255,255,0.08)';
+            ctx.fillRect(0, 0, W, H);
+          }
+          for (let i = 0; i < 5; i++) {
+            const x = 80 + i * 150 + Math.sin(t / 40 + i) * 30;
+            ctx.globalAlpha = 0.18;
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x + 20, 80);
+            ctx.lineTo(x - 10, 140);
+            ctx.lineTo(x + 25, 220);
+            ctx.lineTo(x, 320);
+            ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+          break;
+        }
+        case 'boss': {
+          const cx = W * 0.5;
+          const cy = H * 0.25;
+          const glow = ctx.createRadialGradient(cx, cy, 10, cx, cy, 280);
+          glow.addColorStop(0, 'rgba(255,40,80,0.18)');
+          glow.addColorStop(0.5, 'rgba(120,20,80,0.10)');
+          glow.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = glow;
+          ctx.fillRect(0, 0, W, H);
+          ctx.strokeStyle = theme.accent;
+          ctx.lineWidth = 2;
+          for (let i = 0; i < 6; i++) {
+            const a = t / 60 + i * Math.PI / 3;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(a) * 220, cy + Math.sin(a) * 160);
+            ctx.stroke();
+          }
+          break;
+        }
+      }
+      ctx.restore();
+    }
+
     // ===== ステージデータ =====
     const stageData = [
-      { name: "CYBER START", bgColor: "#001122", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 450, width: 100, height: 20 },{ x: 300, y: 350, width: 150, height: 20 },{ x: 500, y: 400, width: 100, height: 20 },{ x: 650, y: 300, width: 100, height: 20 }], enemies: [{ x: 350, y: 310, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 150, y: 410, type: 'coin' },{ x: 375, y: 310, type: 'heart' },{ x: 550, y: 360, type: 'coin' }], goalY: 260 },
-      { name: "NEON CITY", bgColor: "#0a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 80, height: 20 },{ x: 200, y: 400, width: 100, height: 20 },{ x: 350, y: 330, width: 80, height: 20 },{ x: 480, y: 280, width: 120, height: 20 },{ x: 650, y: 200, width: 100, height: 20 }], enemies: [{ x: 250, y: 360, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 500, y: 240, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 120, y: 430, type: 'coin' },{ x: 390, y: 290, type: 'speedBoost' },{ x: 530, y: 240, type: 'coin' }], goalY: 160 },
-      { name: "DATA STREAM", bgColor: "#1a0a1a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 60, height: 20 },{ x: 150, y: 430, width: 80, height: 20 },{ x: 270, y: 380, width: 60, height: 20 },{ x: 370, y: 320, width: 100, height: 20 },{ x: 520, y: 270, width: 80, height: 20 },{ x: 650, y: 220, width: 100, height: 20 }], enemies: [{ x: 200, y: 390, width: 40, height: 40, speed: 2, range: 60 },{ x: 420, y: 280, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 560, y: 230, width: 40, height: 40, speed: 1, range: 60 }], items: [{ x: 80, y: 440, type: 'coin' },{ x: 300, y: 340, type: 'highJump' },{ x: 420, y: 280, type: 'heart' },{ x: 690, y: 180, type: 'coin' }], goalY: 180 },
-      { name: "MATRIX ZONE", bgColor: "#0a1a1a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 100, height: 20 },{ x: 200, y: 430, width: 80, height: 20, type: 'blinking', timer: 0 },{ x: 350, y: 380, width: 150, height: 20 },{ x: 550, y: 330, width: 80, height: 20, type: 'blinking', timer: 150 },{ x: 680, y: 250, width: 100, height: 20 }], enemies: [{ x: 380, y: 340, width: 40, height: 40, speed: 1, range: 100 },{ x: 600, y: 510, width: 40, height: 40, speed: 2, range: 150 }], items: [{ x: 70, y: 440, type: 'coin' },{ x: 400, y: 340, type: 'shield' },{ x: 700, y: 210, type: 'heart' }], goalY: 210 },
-      { name: "CYBER CORE", bgColor: "#2a0a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 490, width: 100, height: 20, type: 'moving', vx: 2, minX: 50, maxX: 200 },{ x: 230, y: 430, width: 60, height: 20 },{ x: 340, y: 370, width: 100, height: 20, type: 'moving', vx: -2, minX: 300, maxX: 450 },{ x: 490, y: 310, width: 60, height: 20 },{ x: 600, y: 250, width: 100, height: 20, type: 'moving', vx: 1.5, minX: 550, maxX: 700 },{ x: 400, y: 480, width: 80, height: 20 }], enemies: [{ x: 130, y: 450, width: 40, height: 40, speed: 1, range: 80 },{ x: 260, y: 390, width: 40, height: 40, speed: 1.5, range: 40 },{ x: 390, y: 330, width: 40, height: 40, speed: 1.2, range: 80 },{ x: 520, y: 270, width: 40, height: 40, speed: 1, range: 40 },{ x: 650, y: 210, width: 40, height: 40, speed: 1.5, range: 80 }], items: [{ x: 130, y: 450, type: 'speedBoost' },{ x: 390, y: 330, type: 'heart' },{ x: 440, y: 440, type: 'coin' },{ x: 650, y: 210, type: 'shield' }], goalY: 210 },
-      { name: "DIGITAL VOID", bgColor: "#1a1a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 500, width: 60, height: 20, type: 'blinking', timer: 0 },{ x: 170, y: 460, width: 60, height: 20 },{ x: 280, y: 420, width: 60, height: 20, type: 'moving', vx: 1, minX: 250, maxX: 350 },{ x: 390, y: 380, width: 60, height: 20 },{ x: 500, y: 340, width: 60, height: 20, type: 'blinking', timer: 150 },{ x: 610, y: 300, width: 60, height: 20 },{ x: 720, y: 260, width: 60, height: 20 }], enemies: [{ x: 200, y: 420, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 310, y: 380, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 420, y: 340, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 530, y: 300, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 640, y: 260, width: 40, height: 40, speed: 1.5, range: 50 }], items: [{ x: 90, y: 460, type: 'coin' },{ x: 310, y: 380, type: 'highJump' },{ x: 530, y: 300, type: 'heart' },{ x: 750, y: 220, type: 'coin' }], goalY: 220 },
-      { name: "NEON NEXUS", bgColor: "#2a1a0a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 480, width: 50, height: 20 },{ x: 200, y: 420, width: 50, height: 20, type: 'moving', vx: 2, minX: 150, maxX: 250 },{ x: 300, y: 360, width: 50, height: 20 },{ x: 400, y: 300, width: 50, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 240, width: 50, height: 20 },{ x: 600, y: 180, width: 50, height: 20, type: 'moving', vx: -2, minX: 550, maxX: 650 },{ x: 700, y: 120, width: 80, height: 20 }], enemies: [{ x: 125, y: 440, width: 40, height: 40, speed: 1.6, range: 30 },{ x: 225, y: 380, width: 40, height: 40, speed: 1.7, range: 30 },{ x: 325, y: 320, width: 40, height: 40, speed: 1.5, range: 30 },{ x: 425, y: 260, width: 40, height: 40, speed: 3.5, range: 30 },{ x: 525, y: 200, width: 40, height: 40, speed: 1, range: 30 },{ x: 625, y: 140, width: 40, height: 40, speed: 1.5, range: 30 }], items: [{ x: 225, y: 380, type: 'speedBoost' },{ x: 425, y: 260, type: 'shield' },{ x: 625, y: 140, type: 'heart' },{ x: 740, y: 80, type: 'coin' }], goalY: 80 },
-      { name: "QUANTUM LEAP", bgColor: "#0a2a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 180, y: 390, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 280, y: 310, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 380, y: 230, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 480, y: 310, width: 40, height: 20 },{ x: 580, y: 390, width: 40, height: 20, type: 'moving', vx: 2, minX: 550, maxX: 650 },{ x: 680, y: 470, width: 40, height: 20 },{ x: 750, y: 150, width: 50, height: 20 }], enemies: [{ x: 100, y: 430, width: 40, height: 40, speed: 3.5, range: 20 },{ x: 200, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 300, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 400, y: 190, width: 40, height: 40, speed: 2, range: 20 },{ x: 500, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 600, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 700, y: 430, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 200, y: 350, type: 'highJump' },{ x: 400, y: 190, type: 'speedBoost' },{ x: 600, y: 350, type: 'shield' },{ x: 775, y: 110, type: 'heart' }], goalY: 110 },
-      { name: "CYBER STORM", bgColor: "#3a0a3a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 500, width: 40, height: 20 },{ x: 130, y: 450, width: 40, height: 20, type: 'moving', vx: 1.5, minX: 100, maxX: 160 },{ x: 210, y: 400, width: 40, height: 20 },{ x: 290, y: 350, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 370, y: 300, width: 40, height: 20 },{ x: 450, y: 250, width: 40, height: 20, type: 'moving', vx: -1.5, minX: 420, maxX: 480 },{ x: 530, y: 200, width: 40, height: 20 },{ x: 610, y: 150, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 690, y: 100, width: 40, height: 20 },{ x: 760, y: 50, width: 40, height: 20 }], enemies: [{ x: 70, y: 460, width: 40, height: 40, speed: 1.4, range: 20 },{ x: 150, y: 410, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 230, y: 360, width: 40, height: 40, speed: 2, range: 20 },{ x: 310, y: 310, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 390, y: 260, width: 40, height: 40, speed: 2, range: 20 },{ x: 470, y: 210, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 550, y: 160, width: 40, height: 40, speed: 10, range: 20 },{ x: 630, y: 110, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 230, y: 360, type: 'speedBoost' },{ x: 390, y: 260, type: 'highJump' },{ x: 550, y: 160, type: 'shield' },{ x: 780, y: 10, type: 'heart' }], goalY: 10 },
-      { name: "FINAL CORE - 魔王の間", bgColor: "#4a0a4a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 490, width: 50, height: 20 },{ x: 150, y: 430, width: 50, height: 20, type: 'moving', vx: 2, minX: 120, maxX: 180 },{ x: 250, y: 370, width: 50, height: 20 },{ x: 350, y: 310, width: 100, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 370, width: 50, height: 20, type: 'blinking', timer: 150 },{ x: 600, y: 430, width: 50, height: 20, type: 'moving', vx: -2, minX: 570, maxX: 630 },{ x: 700, y: 490, width: 50, height: 20 },{ x: 350, y: 180, width: 100, height: 20 }], enemies: [{ x: 360, y: 100, width: 80, height: 80, speed: 1, range: 60, isBoss: true }], items: [{ x: 100, y: 450, type: 'heart' },{ x: 275, y: 330, type: 'shield' },{ x: 400, y: 270, type: 'speedBoost' },{ x: 525, y: 330, type: 'highJump' },{ x: 650, y: 390, type: 'heart' }], goalY: 140 }
+      { name: "CYBER START", bgColor: "#3a6a8a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 450, width: 100, height: 20 },{ x: 300, y: 350, width: 150, height: 20 },{ x: 500, y: 400, width: 100, height: 20 },{ x: 650, y: 300, width: 100, height: 20 }], enemies: [{ x: 350, y: 310, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 150, y: 410, type: 'coin' },{ x: 375, y: 310, type: 'heart' },{ x: 550, y: 360, type: 'coin' }], goalY: 260 },
+      { name: "NEON CITY", bgColor: "#3a3a7a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 80, height: 20 },{ x: 200, y: 400, width: 100, height: 20 },{ x: 350, y: 330, width: 80, height: 20 },{ x: 480, y: 280, width: 120, height: 20 },{ x: 650, y: 200, width: 100, height: 20 }], enemies: [{ x: 250, y: 360, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 500, y: 240, width: 40, height: 40, speed: 1, range: 100 }], items: [{ x: 120, y: 430, type: 'coin' },{ x: 390, y: 290, type: 'speedBoost' },{ x: 530, y: 240, type: 'coin' }], goalY: 160 },
+      { name: "DATA STREAM", bgColor: "#5a3a5a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 60, height: 20 },{ x: 150, y: 430, width: 80, height: 20 },{ x: 270, y: 380, width: 60, height: 20 },{ x: 370, y: 320, width: 100, height: 20 },{ x: 520, y: 270, width: 80, height: 20 },{ x: 650, y: 220, width: 100, height: 20 }], enemies: [{ x: 200, y: 390, width: 40, height: 40, speed: 2, range: 60 },{ x: 420, y: 280, width: 40, height: 40, speed: 1.5, range: 80 },{ x: 560, y: 230, width: 40, height: 40, speed: 1, range: 60 }], items: [{ x: 80, y: 440, type: 'coin' },{ x: 300, y: 340, type: 'highJump' },{ x: 420, y: 280, type: 'heart' },{ x: 690, y: 180, type: 'coin' }], goalY: 180 },
+      { name: "MATRIX ZONE", bgColor: "#2a5a4a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 480, width: 100, height: 20 },{ x: 200, y: 430, width: 80, height: 20, type: 'blinking', timer: 0 },{ x: 350, y: 380, width: 150, height: 20 },{ x: 550, y: 330, width: 80, height: 20, type: 'blinking', timer: 150 },{ x: 680, y: 250, width: 100, height: 20 }], enemies: [{ x: 380, y: 340, width: 40, height: 40, speed: 1, range: 100 },{ x: 600, y: 510, width: 40, height: 40, speed: 2, range: 150 }], items: [{ x: 70, y: 440, type: 'coin' },{ x: 400, y: 340, type: 'shield' },{ x: 700, y: 210, type: 'heart' }], goalY: 210 },
+      { name: "CYBER CORE", bgColor: "#5a3a6a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 490, width: 100, height: 20, type: 'moving', vx: 2, minX: 50, maxX: 200 },{ x: 230, y: 430, width: 60, height: 20 },{ x: 340, y: 370, width: 100, height: 20, type: 'moving', vx: -2, minX: 300, maxX: 450 },{ x: 490, y: 310, width: 60, height: 20 },{ x: 600, y: 250, width: 100, height: 20, type: 'moving', vx: 1.5, minX: 550, maxX: 700 },{ x: 400, y: 480, width: 80, height: 20 }], enemies: [{ x: 130, y: 450, width: 40, height: 40, speed: 1, range: 80 },{ x: 260, y: 390, width: 40, height: 40, speed: 1.5, range: 40 },{ x: 390, y: 330, width: 40, height: 40, speed: 1.2, range: 80 },{ x: 520, y: 270, width: 40, height: 40, speed: 1, range: 40 },{ x: 650, y: 210, width: 40, height: 40, speed: 1.5, range: 80 }], items: [{ x: 130, y: 450, type: 'speedBoost' },{ x: 390, y: 330, type: 'heart' },{ x: 440, y: 440, type: 'coin' },{ x: 650, y: 210, type: 'shield' }], goalY: 210 },
+      { name: "DIGITAL VOID", bgColor: "#3a3a6a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 500, width: 60, height: 20, type: 'blinking', timer: 0 },{ x: 170, y: 460, width: 60, height: 20 },{ x: 280, y: 420, width: 60, height: 20, type: 'moving', vx: 1, minX: 250, maxX: 350 },{ x: 390, y: 380, width: 60, height: 20 },{ x: 500, y: 340, width: 60, height: 20, type: 'blinking', timer: 150 },{ x: 610, y: 300, width: 60, height: 20 },{ x: 720, y: 260, width: 60, height: 20 }], enemies: [{ x: 200, y: 420, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 310, y: 380, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 420, y: 340, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 530, y: 300, width: 40, height: 40, speed: 1.5, range: 50 },{ x: 640, y: 260, width: 40, height: 40, speed: 1.5, range: 50 }], items: [{ x: 90, y: 460, type: 'coin' },{ x: 310, y: 380, type: 'highJump' },{ x: 530, y: 300, type: 'heart' },{ x: 750, y: 220, type: 'coin' }], goalY: 220 },
+      { name: "NEON NEXUS", bgColor: "#6a4a2a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 100, y: 480, width: 50, height: 20 },{ x: 200, y: 420, width: 50, height: 20, type: 'moving', vx: 2, minX: 150, maxX: 250 },{ x: 300, y: 360, width: 50, height: 20 },{ x: 400, y: 300, width: 50, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 240, width: 50, height: 20 },{ x: 600, y: 180, width: 50, height: 20, type: 'moving', vx: -2, minX: 550, maxX: 650 },{ x: 700, y: 120, width: 80, height: 20 }], enemies: [{ x: 125, y: 440, width: 40, height: 40, speed: 1.6, range: 30 },{ x: 225, y: 380, width: 40, height: 40, speed: 1.7, range: 30 },{ x: 325, y: 320, width: 40, height: 40, speed: 1.5, range: 30 },{ x: 425, y: 260, width: 40, height: 40, speed: 3.5, range: 30 },{ x: 525, y: 200, width: 40, height: 40, speed: 1, range: 30 },{ x: 625, y: 140, width: 40, height: 40, speed: 1.5, range: 30 }], items: [{ x: 225, y: 380, type: 'speedBoost' },{ x: 425, y: 260, type: 'shield' },{ x: 625, y: 140, type: 'heart' },{ x: 740, y: 80, type: 'coin' }], goalY: 80 },
+      { name: "QUANTUM LEAP", bgColor: "#2a6a6a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 80, y: 470, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 180, y: 390, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 280, y: 310, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 380, y: 230, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 480, y: 310, width: 40, height: 20 },{ x: 580, y: 390, width: 40, height: 20, type: 'moving', vx: 2, minX: 550, maxX: 650 },{ x: 680, y: 470, width: 40, height: 20 },{ x: 750, y: 150, width: 50, height: 20 }], enemies: [{ x: 100, y: 430, width: 40, height: 40, speed: 3.5, range: 20 },{ x: 200, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 300, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 400, y: 190, width: 40, height: 40, speed: 2, range: 20 },{ x: 500, y: 270, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 600, y: 350, width: 40, height: 40, speed: 4, range: 20 },{ x: 700, y: 430, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 200, y: 350, type: 'highJump' },{ x: 400, y: 190, type: 'speedBoost' },{ x: 600, y: 350, type: 'shield' },{ x: 775, y: 110, type: 'heart' }], goalY: 110 },
+      { name: "CYBER STORM", bgColor: "#5a3a6a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 50, y: 500, width: 40, height: 20 },{ x: 130, y: 450, width: 40, height: 20, type: 'moving', vx: 1.5, minX: 100, maxX: 160 },{ x: 210, y: 400, width: 40, height: 20 },{ x: 290, y: 350, width: 40, height: 20, type: 'blinking', timer: 0 },{ x: 370, y: 300, width: 40, height: 20 },{ x: 450, y: 250, width: 40, height: 20, type: 'moving', vx: -1.5, minX: 420, maxX: 480 },{ x: 530, y: 200, width: 40, height: 20 },{ x: 610, y: 150, width: 40, height: 20, type: 'blinking', timer: 150 },{ x: 690, y: 100, width: 40, height: 20 },{ x: 760, y: 50, width: 40, height: 20 }], enemies: [{ x: 70, y: 460, width: 40, height: 40, speed: 1.4, range: 20 },{ x: 150, y: 410, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 230, y: 360, width: 40, height: 40, speed: 2, range: 20 },{ x: 310, y: 310, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 390, y: 260, width: 40, height: 40, speed: 2, range: 20 },{ x: 470, y: 210, width: 40, height: 40, speed: 1.5, range: 20 },{ x: 550, y: 160, width: 40, height: 40, speed: 10, range: 20 },{ x: 630, y: 110, width: 40, height: 40, speed: 1.5, range: 20 }], items: [{ x: 230, y: 360, type: 'speedBoost' },{ x: 390, y: 260, type: 'highJump' },{ x: 550, y: 160, type: 'shield' },{ x: 780, y: 10, type: 'heart' }], goalY: 10 },
+      { name: "FINAL CORE - 魔王の間", bgColor: "#6a2a4a", platforms: [{ x: 0, y: 550, width: 800, height: 50 },{ x: 60, y: 490, width: 50, height: 20 },{ x: 150, y: 430, width: 50, height: 20, type: 'moving', vx: 2, minX: 120, maxX: 180 },{ x: 250, y: 370, width: 50, height: 20 },{ x: 350, y: 310, width: 100, height: 20, type: 'blinking', timer: 0 },{ x: 500, y: 370, width: 50, height: 20, type: 'blinking', timer: 150 },{ x: 600, y: 430, width: 50, height: 20, type: 'moving', vx: -2, minX: 570, maxX: 630 },{ x: 700, y: 490, width: 50, height: 20 },{ x: 350, y: 180, width: 100, height: 20 }], enemies: [{ x: 360, y: 100, width: 80, height: 80, speed: 1, range: 60, isBoss: true }], items: [{ x: 100, y: 450, type: 'heart' },{ x: 275, y: 330, type: 'shield' },{ x: 400, y: 270, type: 'speedBoost' },{ x: 525, y: 330, type: 'highJump' },{ x: 650, y: 390, type: 'heart' }], goalY: 140 }
     ];
 
     function loadStage(stageIndex) {
@@ -600,20 +949,92 @@
       enemies = stage.enemies.map(e => ({ ...e, startX: e.x, direction: 1, enemyType: stageIndex === 9 ? ['rabbit','ghost','bomb','fire'][Math.floor(Math.random()*4)] : stageEnemyMapping[stageIndex] }));
       items = stage.items.map(item => ({ ...item, width: 20, height: 20, collected: false }));
       goal.y = stage.goalY;
-      canvas.style.background = `linear-gradient(to bottom, ${stage.bgColor}, #000)`;
+      const theme = stageBgThemes[stageIndex] || stageBgThemes[1];
+      canvas.style.background = `linear-gradient(to bottom, ${theme.top}, ${theme.bottom})`;
       AudioSystem.playBGM(stageIndex === 10);
     }
 
-    function init() { 
-      // iOSでの長押しメニュー禁止処理を追加
-      window.addEventListener('contextmenu', function(e) {
+    function init() {
+      // 選択・長押しメニュー・ドラッグ禁止
+      window.addEventListener('contextmenu', (e) => {
         e.preventDefault();
         e.stopPropagation();
         return false;
       }, { passive: false });
+      document.addEventListener('selectstart', (e) => e.preventDefault());
+      document.addEventListener('dragstart', (e) => e.preventDefault());
+      document.addEventListener('dblclick', (e) => e.preventDefault());
 
-      setupEventListeners(); 
-      updateUI(); 
+      // ダブルタップズーム防止
+      let lastTouchEnd = 0;
+      document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) e.preventDefault();
+        lastTouchEnd = now;
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (e.target.closest('[data-scrollable]')) return;
+        e.preventDefault();
+      }, { passive: false });
+
+      // アプリ復帰時に iOS の AudioContext / BGM を再開
+      const resumeAudioOnReturn = () => {
+        AudioSystem.ensureResumed();
+        if (gameState === 'playing') AudioSystem.resumeBGM();
+      };
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') resumeAudioOnReturn();
+      });
+      window.addEventListener('pageshow', resumeAudioOnReturn);
+      window.addEventListener('focus', resumeAudioOnReturn);
+
+      setupEventListeners();
+      updateUI();
+    }
+
+    function bindHoldKey(el, keyName, opts = {}) {
+      if (!el) return;
+      const clickFeel = opts.clickFeel !== false;
+      const press = (e) => {
+        if (e && e.cancelable) e.preventDefault();
+        if (e && e.pointerId != null && el.setPointerCapture) {
+          try { el.setPointerCapture(e.pointerId); } catch (_) {}
+        }
+        el.classList.add('is-pressed');
+        keys[keyName] = true;
+        AudioSystem.unlock();
+        if (clickFeel) {
+          if (navigator.vibrate) navigator.vibrate(15);
+          AudioSystem.playClick();
+        }
+      };
+      const release = () => {
+        el.classList.remove('is-pressed');
+        keys[keyName] = false;
+      };
+
+      el.addEventListener('pointerdown', press);
+      el.addEventListener('pointerup', release);
+      el.addEventListener('pointercancel', release);
+      el.addEventListener('lostpointercapture', release);
+    }
+
+    function bindTap(el, handler) {
+      if (!el) return;
+      const fire = (e) => {
+        if (e && e.cancelable) e.preventDefault();
+        el.classList.add('is-pressed');
+        if (navigator.vibrate) navigator.vibrate(15);
+        AudioSystem.unlock();
+        AudioSystem.playClick();
+        handler(e);
+      };
+      const release = () => el.classList.remove('is-pressed');
+      el.addEventListener('pointerdown', fire);
+      el.addEventListener('pointerup', release);
+      el.addEventListener('pointercancel', release);
+      el.addEventListener('pointerleave', release);
     }
 
     function setupEventListeners() {
@@ -628,39 +1049,30 @@
         if (e.key === ' ' || e.key === 'ArrowUp') keys.space = false;
       });
 
-      const leftBtn = document.getElementById('leftBtn');
-      const rightBtn = document.getElementById('rightBtn');
-      const jumpBtn = document.getElementById('jumpBtn');
+      bindHoldKey(document.getElementById('leftBtn'), 'left');
+      bindHoldKey(document.getElementById('rightBtn'), 'right');
+      bindHoldKey(document.getElementById('jumpBtn'), 'space');
 
-      [leftBtn, rightBtn, jumpBtn].forEach(btn => {
-        if (!btn) return;
-        const key = btn.id === 'leftBtn' ? 'left' : btn.id === 'rightBtn' ? 'right' : 'space';
-        btn.addEventListener('touchstart', (e) => { e.preventDefault(); keys[key] = true; }, { passive: false });
-        btn.addEventListener('touchend', (e) => { e.preventDefault(); keys[key] = false; }, { passive: false });
-        btn.addEventListener('touchcancel', () => keys[key] = false);
-        btn.addEventListener('mousedown', () => keys[key] = true);
-        btn.addEventListener('mouseup', () => keys[key] = false);
-        btn.addEventListener('mouseleave', () => keys[key] = false);
-      });
-
-      document.getElementById('bgmToggle').addEventListener('click', function() {
+      bindTap(document.getElementById('bgmToggle'), function() {
         const enabled = AudioSystem.toggleBGM();
-        this.classList.toggle('muted', !enabled);
-        this.textContent = enabled ? '🎵' : '🔇';
+        const btn = document.getElementById('bgmToggle');
+        btn.classList.toggle('muted', !enabled);
+        btn.textContent = enabled ? '🎵' : '🔇';
       });
-      document.getElementById('seToggle').addEventListener('click', function() {
+      bindTap(document.getElementById('seToggle'), function() {
         const enabled = AudioSystem.toggleSE();
-        this.classList.toggle('muted', !enabled);
-        this.textContent = enabled ? '🔊' : '🔈';
+        const btn = document.getElementById('seToggle');
+        btn.classList.toggle('muted', !enabled);
+        btn.textContent = enabled ? '🔊' : '🔈';
       });
 
-      messageButton.addEventListener('click', handleMessageButton);
+      bindTap(messageButton, handleMessageButton);
     }
 
     function handleMessageButton() {
       // ユーザー操作の中でオーディオロックを外す（iOS Safari必須。init より先に呼ぶ）
-      AudioSystem.unlock();
       AudioSystem.init();
+      AudioSystem.unlock();
       if (gameState === 'menu') startGame();
       else if (gameState === 'stageClear') nextStage();
       else if (gameState === 'gameOver' || gameState === 'gameComplete') resetGame();
@@ -765,8 +1177,8 @@
     function updateParticles() { particles = particles.filter(p => { p.x += p.vx; p.y += p.vy; p.vy += 0.2; p.life--; return p.life > 0; }); }
 
     function draw() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      bgTick++;
+      drawStageBackground(currentStage);
 
       platforms.forEach(p => {
         if (p.type === 'blinking' && !p.visible) return;
